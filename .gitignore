@@ -1,0 +1,17 @@
+# Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Operating System / Editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+
+# Ignore image inputs and exported outputs, preserving directory structure via .keep
+input/*
+!input/.keep
+output/*
+!output/.keep

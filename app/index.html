@@ -1,0 +1,1550 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SEM 颗粒测量</title><style>:root{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#213b3c;background:#f3f6f5;font-size:14px}*{box-sizing:border-box}body{margin:0}header{height:92px;background:white;border-bottom:1px solid #dde5e1;display:flex;align-items:center;gap:16px;padding:20px 30px}header b{font-size:22px}small{font-size:10px;letter-spacing:2px;color:#81938e;margin-left:12px}p{color:#7b8b86;font-size:12px;line-height:1.7;margin:7px 0}.logo{background:#196653;color:white;border-radius:13px;font-size:28px;padding:8px 14px}.local{margin-left:auto;color:#649080;font-size:12px}button,.button,select{border:1px solid #d6e1dc;background:white;border-radius:7px;color:#36594c;padding:10px 13px;font:inherit;cursor:pointer}button:hover,.button:hover{background:#e6f1eb}.primary{background:#1b7059;color:white;border-color:#1b7059}.primary:hover{background:#155341}main{display:grid;grid-template-columns:280px 1fr;max-width:1800px;margin:auto}aside{background:#fafcfb;border-right:1px solid #dde5e1;padding:0 20px}section{padding:20px 0;border-bottom:1px solid #e2e8e4}h3{margin:0 0 15px;font-size:12px;color:#859c90;letter-spacing:1px}h3 span{color:#24483a;font-size:15px;margin-left:8px}label{display:block;font-size:12px;margin:12px 0}input[type=number],select{display:block;width:100%;margin-top:6px;padding:8px;border:1px solid #d6e1dc;border-radius:5px;background:white;color:#264538}input[type=range]{width:100%;accent-color:#24795e;margin-top:10px}output{float:right;color:#47745e}.pair{display:flex;gap:12px}.pair label{width:50%}.check{display:flex;align-items:center;gap:7px}.check input{accent-color:#24795e}.note{font-size:12px;color:#26725a;background:#edf4ef;padding:8px;border-radius:5px}.full{width:100%;margin-top:12px}article{padding:22px;min-width:0}.toolbar{display:flex;gap:14px;align-items:center;margin-bottom:14px}.tabs{display:flex;background:#e7ede9;border-radius:8px;padding:3px}.tabs button{border:0;background:transparent;padding:7px 13px;font-size:12px}.tabs .active{background:white;box-shadow:0 1px 5px #bdcbc2}.toolbar span{margin-left:auto;font-size:12px;color:#819087;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.toolbar select{width:auto;margin:0}.stage{background:#151e20;border-radius:10px;height:480px;overflow:auto;display:flex;align-items:flex-start;justify-content:flex-start;padding:12px}canvas{display:block;max-width:none;margin:auto;touch-action:none}.legend{display:flex;gap:20px;font-size:11px;margin:12px 0;color:#83918a}#status{font-size:12px;color:#567366;min-height:22px}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:15px 0}.metrics>div{background:white;border:1px solid #e0e7e2;padding:14px 18px;border-radius:9px}.metrics label{color:#839087;margin:0 0 8px}.metrics strong{font-size:24px;font-weight:550;letter-spacing:-.5px}.results{background:white;border:1px solid #e0e7e2;border-radius:9px;padding:20px}.resulthead{display:flex;align-items:center;gap:10px}.resulthead div{margin-right:auto}h2{font-size:16px;margin:0}.tablewrap{max-height:350px;overflow:auto;margin-top:18px}table{width:100%;border-collapse:collapse;font-size:12px;white-space:nowrap}th{background:#f2f6f3;position:sticky;top:0;color:#708477;font-weight:500}td,th{text-align:left;padding:12px;border-bottom:1px solid #edf1ed}tr:hover td{background:#f0f7f3}tr.excluded{opacity:.4}.foot{margin-top:15px}.badge{color:#9b681e}.legend span:last-child{margin-left:auto}@media(max-width:900px){main{grid-template-columns:235px 1fr}header{padding:15px}.local,small{display:none}article{padding:12px}.stage{height:380px}.metrics{grid-template-columns:1fr 1fr}.resulthead{flex-wrap:wrap}.legend{flex-wrap:wrap}.toolbar{flex-wrap:wrap}}@media(max-width:600px){main{display:block}aside{display:grid;grid-template-columns:1fr;max-height:360px;overflow:auto}header b{font-size:16px}header{gap:8px}.logo{display:none}.stage{height:330px}}
+
+.locate{padding:3px 8px;color:#176d9a;text-decoration:underline;font-size:12px}.stage canvas{flex-shrink:0}
+
+/* Image and measurements remain side by side for particle review. */
+main{max-width:none;grid-template-columns:250px minmax(880px,1fr)}
+article{display:grid;grid-template-columns:minmax(420px,1.15fr) minmax(420px,1fr);gap:18px;padding:18px;align-items:start}
+.image-panel,.data-panel{min-width:0}.image-panel{position:sticky;top:16px}
+.stage{height:calc(100vh - 230px);min-height:430px}
+.toolbar{flex-wrap:wrap;gap:8px}.toolbar span{max-width:150px}
+.legend{flex-wrap:wrap;gap:12px}.legend span:last-child{margin-left:0;width:100%}
+.legend-real,.legend-fit{display:inline-flex;align-items:center;gap:7px;color:#d91525}
+.legend-real:before,.legend-fit:before{content:'';display:inline-block;width:25px;border-top:3px solid #ff202e}.legend-fit:before{border-top-style:dashed}
+.metrics{grid-template-columns:repeat(2,minmax(0,1fr));margin:0 0 14px;gap:10px}.metrics strong{font-size:21px}.metrics>div{padding:12px}
+.results{padding:14px}.resulthead{flex-wrap:wrap}.resulthead>div{width:100%}.tablewrap{max-height:calc(100vh - 430px);min-height:240px}td,th{padding:10px 8px}.badge{color:#b52630}
+@media(max-width:1100px){main{grid-template-columns:215px minmax(880px,1fr)}aside{padding:0 12px}article{gap:12px;padding:12px}}
+@media(max-width:600px){main{display:block}article{width:900px}.image-panel{position:static}.stage{height:480px}}
+
+header{height:58px;padding:8px 18px;gap:12px}header .button{margin:0}h3{color:#344c40;letter-spacing:0;font-size:14px}.stage{height:calc(100vh - 188px)}.tablewrap{max-height:calc(100vh - 370px)}.foot{font-size:11px;color:#7b8b86}section{padding:14px 0}.results{padding:14px}button[hidden]{display:none}
+
+tr.selected td{background:#e3effb;box-shadow:inset 0 1px #a3c7ed,inset 0 -1px #a3c7ed}
+
+/* v3: side-by-side data review; optionally stacked original and marked images. */
+.image-stack{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+.stage-block{min-width:0}.stage-label{display:none;font-size:12px;font-weight:650;color:#496458;margin:0 0 5px 3px}
+.image-stack.compare .stage-label{display:block}
+.image-stack.compare .stage{height:clamp(215px,calc((100vh - 300px)/2),600px);min-height:215px}
+#originalStage[hidden]{display:none!important}
+#originalStage{border:1px solid #304b4a}
+#originalCanvas{cursor:crosshair}
+#compareToggle.active{background:#daece2;border-color:#67a48a;color:#135f4a;font-weight:600}
+#compareToggle{white-space:nowrap}
+.results .filter-actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:13px 0 5px}
+#filterLowCirc{border-color:#d79383;background:#fff8f6;color:#a43f30;font-weight:600}
+#filterLowCirc:hover{background:#ffeae4}
+#restoreCirc{color:#4e7263}
+.filter-note{color:#697c71;font-size:11px}
+button:disabled{opacity:.45;cursor:not-allowed}
+.graphs{margin-top:14px;padding:14px;background:#fff;border:1px solid #e0e7e2;border-radius:9px}
+.graph-head{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:8px}
+.graph-head h2{margin-right:auto}
+.graph-controls{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:5px 0 10px}
+.graph-controls label{margin:0;display:flex;align-items:center;gap:7px;color:#4a6256;font-size:12px}
+.graph-controls input[type=number]{width:64px;padding:6px;margin:0}
+.graph-controls input[type=checkbox]{accent-color:#20775c}
+.graph-message{font-size:11px;color:#718579;margin:0 0 10px}
+.graph-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.graph-card{min-width:0;border:1px solid #e3ebe5;border-radius:8px;padding:10px;background:#fcfdfc}
+.graph-card-head{display:flex;justify-content:space-between;gap:7px;align-items:baseline;flex-wrap:wrap}
+.graph-card h3{font-size:12px;color:#325347;margin:0;letter-spacing:0}
+.graph-card small{margin:0;letter-spacing:0;font-size:10px;color:#7e9187}
+.graph-card svg{display:block;width:100%;height:auto;max-height:285px}
+.graph-empty{min-height:230px;display:grid;place-items:center;color:#94a49a;font-size:12px}
+#toCharts{font-weight:550}
+@media(max-width:1500px){.graph-grid{grid-template-columns:1fr}}
+@media(max-width:900px){.image-stack.compare .stage{height:310px}.graph-grid{grid-template-columns:1fr}}
+
+/* v3.1: particle population and weighted distribution summaries. */
+.metrics{grid-template-columns:repeat(3,minmax(0,1fr))}
+.metrics strong{font-size:19px}
+.metrics label{line-height:1.4}
+.stat-summary{background:#fff;border:1px solid #e0e7e2;border-radius:9px;padding:13px 14px;margin-bottom:14px}
+.stat-summary h2{font-size:15px}
+.stat-summary-head{display:flex;align-items:center;justify-content:space-between;gap:7px;flex-wrap:wrap}
+.stat-summary .help{font-size:11px;color:#73897e;margin:6px 0 8px}
+.stat-summary table{font-size:11px;white-space:normal}
+.stat-summary th,.stat-summary td{padding:8px 5px;text-align:right}
+.stat-summary th:first-child,.stat-summary td:first-child{text-align:left}
+.stat-extras{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px 13px;margin:11px 0 7px}
+.stat-extras div{display:flex;justify-content:space-between;align-items:baseline;gap:7px;border-bottom:1px dotted #e6eae6;font-size:11px;padding:5px 0;color:#738277}
+.stat-extras strong{font-size:12px;color:#2b4d40;text-align:right}
+.stat-warning{color:#996b32;font-size:11px;line-height:1.5;margin:7px 0 0}
+#downloadStats{font-size:11px;padding:7px 9px}
+@media(max-width:1250px){.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Reference-style dual-axis journal figure, independently downloadable. */
+.reference-panel{background:#fff;border:1px solid #e0e7e2;border-radius:9px;padding:14px;margin:14px 0 18px}
+.reference-head{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.reference-head h3{font-size:14px;letter-spacing:0;margin:0 auto 0 0;color:#344c40}
+.reference-head button{font-size:12px;padding:8px 10px}
+.reference-options{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:0 0 10px}
+.reference-options label{display:flex;align-items:center;gap:6px;font-size:12px;color:#506a5d;margin:0}
+.reference-options input[type=number]{width:66px;padding:6px;margin:0}
+.reference-options select{width:auto;margin:0;padding:7px 8px}
+.reference-figure{width:100%;background:#fff;overflow:auto;border:1px solid #e9e9e9;border-radius:5px}
+.reference-figure svg{display:block;width:100%;height:auto;margin:0}
+.reference-description{font-size:11px;line-height:1.55;color:#758379;margin:8px 0 0}
+.reference-figure .graph-empty{min-height:270px}
+
+/* v4.0 UI: compact review workspace, prioritized filters, wide journal charts. */
+:root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;color:#273b32;background:#f6f8f6}
+body{min-width:0}header{height:auto;min-height:70px;position:sticky;top:0;z-index:20;padding:10px 19px;gap:16px;box-shadow:0 2px 12px #1833280a;flex-wrap:wrap}
+.file-area{display:flex;gap:7px;align-items:center;min-width:0;flex-wrap:wrap}.file-area .button,.file-area button{margin:0;font-size:12px;padding:8px 10px;white-space:nowrap}.file-area select{margin:0;width:clamp(165px,18vw,360px);font-size:12px;padding:8px 10px;min-width:0}
+
+main{display:grid;grid-template-columns:242px minmax(0,1fr);max-width:2100px;margin:0 auto;align-items:start}
+aside{padding:6px 14px 28px;background:#fff;min-height:calc(100vh - 70px);position:sticky;top:70px;max-height:calc(100vh - 70px);overflow:auto}
+aside section{padding:14px 0}aside section:last-child{border-bottom:0}aside h3{font-size:13px;color:#285942;font-weight:720;margin-bottom:11px}aside p{font-size:11px;margin:6px 0 10px;color:#839186}aside label{font-size:11px;margin:9px 0}aside .pair{gap:8px}aside button{padding:8px 10px;font-size:12px}
+article{display:grid;grid-template-columns:minmax(460px,1fr) minmax(480px,.92fr);gap:16px;padding:15px 18px 28px;align-items:start;width:100%;min-width:0}
+.image-panel{position:sticky;top:84px;min-width:0;background:#fff;border:1px solid #e1e9e3;border-radius:12px;padding:11px;box-shadow:0 2px 10px #244c3607}
+.toolbar{margin-bottom:9px;gap:7px}.toolbar #filename{max-width:240px;order:5;margin-left:0}.toolbar #zoom{max-width:116px}.tabs{gap:2px}.tabs button{padding:7px 10px}
+.stage{height:clamp(420px,calc(100vh - 240px),1000px);min-height:380px}
+.image-stack.compare .stage{height:clamp(240px,calc((100vh - 315px)/2),550px);min-height:220px}
+.legend{margin:12px 2px 5px}.legend span:last-child{width:100%;margin:0;color:#587f69;font-weight:600}
+#status{padding:8px 10px;background:#f4f8f5;border-radius:7px;line-height:1.5;overflow-wrap:anywhere;min-height:36px;margin-top:8px}
+.data-panel{min-width:0}.metrics{grid-template-columns:repeat(3,minmax(0,1fr));margin:0 0 10px;gap:8px}.metrics>div{padding:10px 12px;border-radius:9px;min-width:0}.metrics label{margin:0 0 5px;font-size:10px}.metrics strong{font-size:17px;overflow-wrap:anywhere}
+.filter-actions{display:flex;flex-wrap:wrap;align-items:center;gap:7px;padding:11px 12px;background:#fff;border:1px solid #dfe9e1;border-radius:10px;margin:0 0 12px}.filter-actions button{font-size:12px;padding:8px 11px}.filter-actions .filter-note{flex-basis:100%;font-size:11px;color:#708479;margin-top:1px}
+.filter-threshold{display:flex;align-items:center;gap:7px;font-size:12px;white-space:nowrap;margin:0;color:#496455;font-weight:650}.filter-threshold input{width:78px!important;margin:0!important;text-align:center;font-size:14px;font-weight:700;padding:7px!important;border-color:#87b69b!important;min-height:35px}
+#filterLowCirc{border-color:#d9a1a0;background:#fff7f6;color:#a13e36;font-weight:600}
+#restoreCirc{padding:8px 9px}.stat-summary{padding:12px 13px;margin-bottom:10px}.results{padding:12px 13px}.resulthead{gap:7px}.resulthead>div{width:auto;min-width:180px;flex:1}.resulthead h2{font-size:14px}.resulthead p{margin:1px 0}.resulthead button,.resulthead select{font-size:11px;padding:7px 8px}.tablewrap{max-height:clamp(290px,39vh,560px);min-height:190px;margin-top:9px}th,td{padding:9px 7px}td:first-child,th:first-child{padding-left:7px}tr.selected td{background:#e1eefb!important}
+article>.graphs{grid-column:1/-1;min-width:0;margin-top:4px;border-radius:12px;padding:15px}.graphs>.graph-head h2{font-size:16px}.graph-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.reference-panel{margin:14px 0 18px}.reference-figure svg{max-height:620px}
+@media(max-width:1540px){article{grid-template-columns:minmax(400px,1fr) minmax(420px,1fr)}.graph-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:1220px){main{grid-template-columns:215px minmax(0,1fr)}article{display:block}.image-panel{position:relative;top:auto;margin-bottom:14px}.stage{height:510px}.data-panel{display:block}.graph-grid{grid-template-columns:repeat(2,minmax(0,1fr))}aside{padding:7px 12px}}
+@media(max-width:750px){header{position:relative;padding:8px}.file-area{width:100%}.file-area select{flex:1;min-width:125px}main{display:block}aside{position:relative;top:auto;max-height:none;min-height:auto;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 15px;padding:10px 14px}article{padding:10px;display:block;width:100%}.image-panel{padding:9px}.stage{height:410px;min-height:220px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.graph-grid{grid-template-columns:1fr}.image-stack.compare .stage{height:260px}}
+/* Reserve the larger column for image review and give charts the full workspace. */
+article{display:grid;grid-template-columns:minmax(0,1fr)}
+.review-workspace{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(350px,1fr);align-items:start;gap:16px;min-width:0}
+.toolbar{flex-wrap:wrap}
+.toolbar #filename{flex-basis:100%;max-width:100%;line-height:1.5}
+.stage{height:clamp(360px,calc(100dvh - 230px),1000px);min-height:0}
+.stage canvas[data-zoomed]{image-rendering:pixelated}
+.image-stack:not(.compare) #originalBlock{display:none}
+.image-stack.compare{grid-template-columns:repeat(2,minmax(0,1fr))}
+.image-stack.compare .stage{height:clamp(360px,calc(100dvh - 252px),1000px);min-height:0}
+.stage-label{min-height:2.8em;display:none;align-items:center}
+.image-stack.compare .stage-label{display:flex}
+article>.graphs{margin-top:0;scroll-margin-top:84px}
+@media(max-width:1100px){
+  .review-workspace{grid-template-columns:minmax(0,1fr)}
+  .image-panel{position:relative;top:auto;margin-bottom:0}
+}
+@media(max-width:750px){
+  .image-stack.compare{grid-template-columns:minmax(0,1fr)}
+  .stage,.image-stack.compare .stage{height:clamp(240px,55dvh,500px)}
+  .stage-label{min-height:0}
+}
+ .gradient-key{display:flex;align-items:center;gap:12px;margin:8px 0;font-size:12px;color:#52635d}.gradient-key[hidden]{display:none}.gradient-key i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px}
+.stage.panning,.stage.panning canvas{cursor:grabbing!important;user-select:none}
+#addParticle[aria-pressed="true"]{background:#daece2;border-color:#67a48a;color:#135f4a}
+
+header h1{font-size:16px;font-weight:650;margin:0;white-space:nowrap}
+.toolbar #previewMarkupLabel{margin:0}.toolbar #previewMarkupLabel[hidden]{display:none}
+.toolbar button,.toolbar select{font-size:12px;padding:7px 9px}
+.zoom-controls{display:inline-flex;align-items:center;gap:3px;margin-left:auto}
+.zoom-controls button{min-width:29px}
+.legend{gap:14px;align-items:baseline;color:#53665e}
+.legend .canvas-help{margin-left:auto}
+.canvas-help summary,.settings summary{cursor:pointer;color:#36574a;font-weight:600}
+.canvas-help p{margin:5px 0 0}
+aside .settings{margin-top:10px;font-size:12px}
+.result-filter{margin-bottom:8px;padding:8px 12px;background:#fff;border:1px solid #e0e7e2;border-radius:8px}
+.result-filter .filter-actions{margin:8px 0 0;padding:0;border:0}
+.filter-note:empty{display:none}
+.stat-summary{margin:10px 0 0}
+.stat-summary[open] summary{margin-bottom:10px}
+.results .resulthead{flex-wrap:wrap}
+.resulthead h2{margin-right:auto}
+.action-menu{position:relative}
+.action-menu summary{list-style:none;cursor:pointer;border:1px solid #d6e1dc;border-radius:7px;padding:7px 9px;color:#36594c;font-size:12px;white-space:nowrap}
+.action-menu summary::-webkit-details-marker{display:none}
+.action-menu summary::after{content:" ▾"}
+.menu-items{position:absolute;right:0;top:calc(100% + 4px);z-index:3;min-width:130px;padding:4px;border:1px solid #d6e1dc;border-radius:8px;background:white;box-shadow:0 4px 12px #18332824}
+.menu-items button{display:block;width:100%;text-align:left;border:0}
+.results th{z-index:1}
+.results th button{display:flex;align-items:center;gap:4px;border:0;background:transparent;padding:0;color:inherit;white-space:nowrap}
+.results th button:hover,.results th[aria-sort] button{color:#185d49}
+.sort-indicator::before{content:"↕";opacity:.5}
+th[aria-sort="ascending"] .sort-indicator::before{content:"↑";opacity:1}
+th[aria-sort="descending"] .sort-indicator::before{content:"↓";opacity:1}
+.results tr.excluded{opacity:1;color:#69776e;background:#f3f5f3}
+.results tr.excluded .locate{color:#546b61}
+@media(max-width:750px){aside .settings{grid-column:auto}.zoom-controls{margin-left:0}}
+
+#reportDialog{width:min(520px,calc(100vw - 24px));border:1px solid #d6e1dc;border-radius:12px;padding:20px;color:#273b32}
+#reportDialog::backdrop{background:#13251f70}
+#reportDialog h2{margin:0 0 12px}
+#reportDialog table{table-layout:fixed}
+#reportDialog th{position:static;white-space:normal}
+#reportDialog label{margin:0;font-size:inherit}
+#reportDialog input{width:100%;padding:7px;border:1px solid #d6e1dc;border-radius:5px;font:inherit}
+.report-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+#reportError{color:#ad2a28}
+#reportError:empty{display:none}
+</style><body><header><h1>SEM 颗粒测量</h1><div class="file-area"><label class="button primary">导入图像<input id="file" type="file" accept=".tif,.tiff,image/tiff,image/png,image/jpeg,image/webp,image/bmp" hidden></label><select id="inputList" title="选择待打开的图像"><option value="">选择图像</option></select><button id="openInput" title="打开选中的图片">打开</button><button id="reloadInputs" title="重新读取 input 文件夹">↻</button><button id="openOutput" title="在文件管理器中输出文件夹 文件夹">打开 output</button><button id="demo" hidden>示例</button></div></header><main><aside><section><h3>尺寸标定</h3><button id="calibrate">画标尺</button><div class="pair"><label>像素长度（px）<input id="pixels" type="number" value="160" min="0.001" step="any"></label><label>实际长度<input id="length" type="number" value="10" min="0.001" step="any"></label></div><label>长度单位<select id="unit"><option>μm</option><option>nm</option><option>mm</option></select></label><div id="scale" class="note"></div></section><section><h3>预处理</h3><label>黑白阈值 <output id="thresholdOut">125</output><input id="threshold" type="range" min="0" max="255" value="125"></label><button id="otsu">自动阈值</button><details class="settings"><summary>预处理参数</summary><label>平滑半径 <output id="blurOut">1 px</output><input id="blur" type="range" min="0" max="4" value="1"></label><label>对比度 <output id="contrastOut">1.0</output><input id="contrast" type="range" min="5" max="25" value="10"></label><label class="check"><input id="invert" type="checkbox">反转黑白（深色颗粒）</label><label>识别时排除底部（px）<input id="crop" type="number" min="0" value="0"></label></details></section><section><h3>颗粒识别</h3><label>最小颗粒面积（px²）<input id="minArea" type="number" value="25" min="3"></label><details class="settings"><summary>识别参数</summary><label class="check"><input id="edge" type="checkbox" checked>跳过边缘截断颗粒</label><label class="check"><input id="complete" type="checkbox" checked>补全缺口与粘连轮廓</label><label>最大缺失圆弧 <output id="missingOut">25%</output><input id="missing" type="range" min="10" max="40" value="25"></label><label class="check"><input id="twoPass" type="checkbox" checked>四轮扫描</label></details><button class="primary full" id="analyze">识别颗粒</button></section></aside><article><div class="review-workspace"><div class="image-panel"><div class="toolbar"><div class="tabs"><button data-view="original">原图</button><button data-view="binary">黑白</button><button data-view="gradient" id="gradientView">灰度突变</button><button class="active" data-view="overlay">标注</button></div><label class="check" id="previewMarkupLabel" hidden><input type="checkbox" id="previewMarkup" checked>显示标注</label><button id="compareToggle" aria-pressed="false" title="同步对照原图与当前视图">对照原图</button><span id="filename">未导入</span><button type="button" id="addParticle" aria-pressed="false">补录颗粒</button><button type="button" id="undoParticle" disabled>撤销补录</button><div class="zoom-controls" role="group" aria-label="缩放"><button type="button" id="zoomOut" aria-label="缩小" title="缩小（−）">−</button><button type="button" id="zoomIn" aria-label="放大" title="放大（+）">+</button><select id="zoom" aria-label="图像缩放"><option value="1">适应窗口</option><option value="2">放大 2×</option><option value="4">放大 4×</option></select></div></div><div class="image-stack" id="imageStack"><div class="stage-block" id="originalBlock"><div class="stage-label">原图</div><div class="stage" id="originalStage" hidden><canvas id="originalCanvas"></canvas></div></div><div class="stage-block"><div class="stage-label">当前视图</div><div class="stage" id="stage"><canvas id="canvas"></canvas></div></div></div><div class="gradient-key" id="gradientKey" hidden><span><i style="background:#ffe14d"></i>边缘响应强（含缓变）</span><span><i style="background:#03cbf4"></i>边缘响应弱</span></div><div class="legend"><span class="legend-real">实测轮廓</span><span class="legend-fit">圆形补全</span><details class="canvas-help"><summary>快捷键</summary><p>↑ / ↓ 定位 · 空格切换纳入 · Delete 排除 · A 恢复 · + / − 缩放 · 右键拖动</p></details></div><div id="status" role="status">导入或打开图像后开始识别。</div></div><div class="data-panel"><div class="metrics"><div><label>纳入颗粒</label><strong id="count">—</strong></div><div><label>平均等效粒径</label><strong id="mean">—</strong></div><div><label>数量中位径 Dn50</label><strong id="median">—</strong></div><div><label>体积中位径 Dv50*</label><strong id="volumeMedian">—</strong></div><div><label>体积分布宽度 Span*</label><strong id="volumeSpan">—</strong></div><div><label>平均实测圆度</label><strong id="circ">—</strong></div></div><details class="settings result-filter"><summary>圆度筛选</summary><div class="filter-actions"><label class="filter-threshold">圆度下限 <input id="circCutoff" type="number" min="0" max="1" step="0.01" value="0.90" inputmode="decimal" title="例如 0.90；严格小于此值的有效圆度将被排除"></label><label class="check"><input id="protectSmallCirc" type="checkbox" checked>保护小颗粒（等效直径 &lt; 16 px）</label><button id="filterLowCirc" disabled title="按圆度阈值批量排除，遵循小颗粒保护设置">排除低圆度</button><button id="restoreCirc" disabled title="只恢复通过批量阈值筛选排除的颗粒，不恢复手动剔除的颗粒">撤销批量过滤</button><span class="filter-note" id="filterInfo"></span></div></details><section class="results"><div class="resulthead"><h2>颗粒结果</h2><button id="toCharts">统计图 ↓</button><button id="report">导出报告</button><details class="action-menu"><summary>导出</summary><div class="menu-items"><button id="csv">测量 CSV</button><button id="downloadStats" disabled>统计 CSV</button><button id="png">标注 PNG</button><button id="colorPng">颗粒填色 PNG</button></div></details></div><div class="tablewrap"><table><thead><tr><th scope="col" title="纳入统计的颗粒优先">纳入</th><th scope="col"><button type="button" data-sort="id">编号<span class="sort-indicator" aria-hidden="true"></span></button></th><th scope="col" aria-sort="descending"><button type="button" data-sort="diameter">粒径<span class="sort-indicator" aria-hidden="true"></span></button></th><th scope="col"><button type="button" data-sort="area">面积<span class="sort-indicator" aria-hidden="true"></span></button></th><th scope="col"><button type="button" data-sort="perimeter">周长<span class="sort-indicator" aria-hidden="true"></span></button></th><th scope="col"><button type="button" data-sort="circularity">圆度<span class="sort-indicator" aria-hidden="true"></span></button></th><th scope="col"><button type="button" data-sort="kind">测量方式<span class="sort-indicator" aria-hidden="true"></span></button></th></tr></thead><tbody id="rows"></tbody></table></div><details class="foot"><summary>计算说明</summary><p>粒径 = 2√(面积/π)。面积按前景像素计算，周长采用四方向 Crofton 估计。像素化可能导致圆度略大于 1，保留原值。圆形补全颗粒的圆度 1 是拟合值，不参与平均实测圆度。此指标不代表三维球形度。</p></details></section><details class="stat-summary settings"><summary>粒径统计</summary><div class="tablewrap" style="max-height:none;min-height:0;margin:0"><table><thead><tr><th>加权口径</th><th>D10</th><th>D50</th><th>D90</th><th>Span</th></tr></thead><tbody id="statsBody"><tr><td colspan="5">识别后生成</td></tr></tbody></table></div><div class="stat-extras" id="statExtras"></div><p class="stat-warning" id="statWarning">* Dv 基于二维等效粒径假设球形，按 d³ 加权估算；不是三维直接测得的体积分数。</p></details></div></div><section class="graphs" id="graphs"><div class="graph-head"><h2>分布统计图</h2><details class="action-menu"><summary>导出图表</summary><div class="menu-items"><button id="downloadCharts" disabled>全部分布图 PNG</button><button id="referencePng" disabled>双轴图 PNG</button><button id="referenceSvg" disabled>双轴图 SVG</button></div></details></div><details class="settings"><summary>图表参数</summary><div class="graph-controls"><label>粒径分箱数 <input type="number" id="chartBins" min="5" max="50" value="14" step="1"></label><label><input type="checkbox" id="chartIncludeFit"> 含拟合圆度</label></div></details><p class="graph-message" id="chartInfo">识别后自动绘制，包含数量、投影面积和球形假设体积分布；随筛选及标定同步更新。</p><div class="reference-panel" id="referencePanel">
+  <div class="reference-head"><h3>粒径双轴分布</h3></div>
+  <div class="reference-options"><label>双轴图分箱数 <input type="number" id="referenceBins" min="8" max="100" value="34" step="1"></label><label>平滑曲线 <select id="referenceCurve"><option value="gaussian">高斯拟合（示例风格）</option><option value="kde">核密度平滑</option></select></label></div>
+  <div class="reference-figure" id="referenceFigure"><div class="graph-empty">识别后生成论文风格双轴统计图</div></div>
+  <p class="reference-description" id="referenceInfo">蓝色：数量频率；粉紫：相对体积份额（假设球形，按 d³ 加权）。柱形为实际分箱统计，曲线仅表示平滑趋势；独立导出不包含其它十张图。</p>
+</div><div class="graph-grid" id="chartGrid"><div class="graph-empty">请先导入并识别颗粒</div></div></section></article></main><dialog id="reportDialog" aria-labelledby="reportTitle"><form id="reportForm">
+<h2 id="reportTitle">核对报告数据</h2>
+<table><thead><tr><th scope="col">项目</th><th scope="col">报告值</th></tr></thead><tbody id="reportRows"></tbody></table>
+<p id="reportError" role="status"></p>
+<div class="report-actions"><button type="button" id="cancelReport">取消</button><button type="submit" class="primary" id="confirmReport">导出 PDF</button></div>
+</form></dialog>
+<script>/* Pure numerical image analysis. Pixel area and four-direction Crofton perimeter.
+   Circle reconstruction is an estimate from visible silhouette arcs, not recovered data. */
+(function(root){
+function smooth(src,w,h,r){if(!r)return Float32Array.from(src);let a=new Float32Array(src.length),b=new Float32Array(src.length);for(let y=0;y<h;y++)for(let x=0;x<w;x++){let s=0,n=0;for(let k=-r;k<=r;k++){let xx=x+k;if(xx>=0&&xx<w){s+=src[y*w+xx];n++}}a[y*w+x]=s/n}for(let y=0;y<h;y++)for(let x=0;x<w;x++){let s=0,n=0;for(let k=-r;k<=r;k++){let yy=y+k;if(yy>=0&&yy<h){s+=a[yy*w+x];n++}}b[y*w+x]=s/n}return b}
+function otsu(a){let hist=new Uint32Array(256);for(const v of a)hist[Math.max(0,Math.min(255,Math.round(v)))]++;let sum=0;for(let i=0;i<256;i++)sum+=i*hist[i];let weight=0,part=0,best=-1,t=127;for(let i=0;i<255;i++){weight+=hist[i];part+=i*hist[i];if(!weight||weight===a.length)continue;let d=part/weight-(sum-part)/(a.length-weight),score=weight*(a.length-weight)*d*d;if(score>best){best=score;t=i}}return t}
+function circle(a,b,c){let d=2*(a.x*(b.y-c.y)+b.x*(c.y-a.y)+c.x*(a.y-b.y));if(Math.abs(d)<1e-5)return null;let aa=a.x*a.x+a.y*a.y,bb=b.x*b.x+b.y*b.y,cc=c.x*c.x+c.y*c.y;let x=(aa*(b.y-c.y)+bb*(c.y-a.y)+cc*(a.y-b.y))/d,y=(aa*(c.x-b.x)+bb*(a.x-c.x)+cc*(b.x-a.x))/d;return{x,y,r:Math.hypot(a.x-x,a.y-y)}}
+function fitCircles(boundary,maxMissing,minArea){
+  let remaining=boundary.slice(), seed=12345;
+  const out=[], rand=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296};
+  for(let pass=0;pass<64 && remaining.length>=15;pass++){
+    const n=remaining.length;
+    const xs=Float64Array.from(remaining,p=>p.x), ys=Float64Array.from(remaining,p=>p.y);
+    const local=new Int32Array(n), matches=new Int32Array(n), bins=new Uint8Array(48);
+    let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
+    for(let i=0;i<n;i++){
+      minX=Math.min(minX,xs[i]); maxX=Math.max(maxX,xs[i]);
+      minY=Math.min(minY,ys[i]); maxY=Math.max(maxY,ys[i]);
+    }
+    const diagonal2=(maxX-minX)**2+(maxY-minY)**2;
+    let best=null,score=0;
+    for(let t=0;t<Math.min(1800,Math.max(480,n*2));t++){
+      const a=remaining[Math.floor(rand()*n)], reach=12*2**(t%6);
+      let countLocal=0;
+      if(t%3!==0 && reach*reach<diagonal2){
+        for(let i=0;i<n;i++){
+          const dx=xs[i]-a.x,dy=ys[i]-a.y;
+          if(dx*dx+dy*dy<=reach*reach)local[countLocal++]=i;
+        }
+      }
+      const useLocal=countLocal>=3, poolSize=useLocal?countLocal:n;
+      const b=Math.floor(rand()*poolSize),d=Math.floor(rand()*poolSize);
+      const c=circle(a,remaining[useLocal?local[b]:b],remaining[useLocal?local[d]:d]);
+      if(!c || c.r<4 || Math.PI*c.r*c.r<minArea)continue;
+      const required=.55*2*Math.PI*c.r;
+      if(required>n)continue;
+      const tol=Math.max(1.1,c.r*.035),lo=(c.r-tol)**2,hi=(c.r+tol)**2;
+      let count=0;
+      for(let i=0;i<n;i++){
+        const dx=xs[i]-c.x,dy=ys[i]-c.y,sq=dx*dx+dy*dy;
+        if(sq>lo && sq<hi)matches[count++]=i;
+      }
+      if(count<required || count<=score)continue;
+      bins.fill(0);
+      let err=0,occupied=0;
+      for(let j=0;j<count;j++){
+        const i=matches[j],dx=xs[i]-c.x,dy=ys[i]-c.y;
+        err+=Math.abs(Math.hypot(dx,dy)-c.r);
+        const bin=Math.floor((Math.atan2(dy,dx)+Math.PI)/(2*Math.PI)*48)%48;
+        if(!bins[bin]){bins[bin]=1;occupied++}
+      }
+      const covered=occupied/48;
+      if(covered<1-maxMissing)continue;
+      let longest=0,run=0;
+      for(let j=0;j<96;j++){run=bins[j%48]?0:run+1;longest=Math.max(longest,run)}
+      if(longest/48>maxMissing)continue;
+      const quality=count*(1-err/count/tol*.2);
+      if(quality>score){score=quality;best={...c,coverage:covered,tol}}
+    }
+    if(!best || out.some(c=>Math.hypot(c.x-best.x,c.y-best.y)<Math.min(c.r,best.r)*.6))break;
+    out.push(best);
+    remaining=remaining.filter(p=>Math.abs(Math.hypot(p.x-best.x,p.y-best.y)-best.r)>best.tol*1.5);
+  }
+  return out;
+}
+function outlineSolidity(points,area){
+if(points.length<3)return 1;
+const p=points.slice().sort((a,b)=>a.x-b.x||a.y-b.y),cross=(a,b,c)=>(b.x-a.x)*(c.y-a.y)-(b.y-a.y)*(c.x-a.x);
+let lo=[],hi=[];for(const q of p){while(lo.length>1&&cross(lo[lo.length-2],lo[lo.length-1],q)<=0)lo.pop();lo.push(q)}for(let i=p.length-1;i>=0;i--){const q=p[i];while(hi.length>1&&cross(hi[hi.length-2],hi[hi.length-1],q)<=0)hi.pop();hi.push(q)}lo.pop();hi.pop();let poly=lo.concat(hi),sum=0;for(let i=0;i<poly.length;i++){let a=poly[i],b=poly[(i+1)%poly.length];sum+=a.x*b.y-a.y*b.x}return Math.min(1,area/Math.max(1,Math.abs(sum)/2));
+}
+function analyze(mask,w,h,opt){let labels=new Int32Array(w*h),queue=new Int32Array(w*h),results=[],components=0,skipped=0;for(let start=0;start<mask.length;start++){if(!mask[start]||labels[start])continue;let id=++components,head=0,tail=1;queue[0]=start;labels[start]=id;let pts=[],boundary=[],edge=false,sx=0,sy=0;while(head<tail){let i=queue[head++],x=i%w,y=(i/w)|0;pts.push(i);sx+=x;sy+=y;let bound=false;if(x===0||y===0||x===w-1||y===h-1)edge=true;for(const [dx,dy]of [[1,0],[-1,0],[0,1],[0,-1]]){let xx=x+dx,yy=y+dy,j=yy*w+xx;if(xx<0||xx>=w||yy<0||yy>=h||!mask[j]){bound=true;continue}if(!labels[j]){labels[j]=id;queue[tail++]=j}}if(bound)boundary.push({x,y})}if(pts.length<opt.minArea){skipped++;continue}if(opt.edge&&edge&&!opt.complete){skipped++;continue}let transitions=[0,0,0,0],dirs=[[1,0],[0,1],[1,1],[1,-1]];for(const i of pts){let x=i%w,y=(i/w)|0;for(let d=0;d<4;d++){let [dx,dy]=dirs[d];for(const sign of [-1,1]){let xx=x+dx*sign,yy=y+dy*sign;if(xx<0||xx>=w||yy<0||yy>=h||labels[yy*w+xx]!==id)transitions[d]++}}}let perimeter=Math.PI/8*(transitions[0]+transitions[1]+(transitions[2]+transitions[3])/Math.SQRT2),area=pts.length,circularity=4*Math.PI*area/perimeter**2;let base={component:id,area,perimeter,circularity,x:sx/area,y:sy/area,boundary,included:true,kind:'实测'};
+let xx=0,yy=0,xy=0;for(const i of pts){let dx=i%w-base.x,dy=Math.floor(i/w)-base.y;xx+=dx*dx;yy+=dy*dy;xy+=dx*dy}let delta=Math.sqrt((xx-yy)**2+4*xy*xy),aspect=Math.sqrt((xx+yy+delta)/Math.max(1,xx+yy-delta));base.solidity=outlineSolidity(boundary,area);if(opt.complete&&(edge||base.solidity<.95)&&area>=50){let circles=fitCircles(boundary,opt.missing,opt.minArea).filter(c=>!opt.edge||(c.x-c.r>=0&&c.y-c.r>=0&&c.x+c.r<w&&c.y+c.r<h));if(circles.length){for(const c of circles){results.push({...base,...c,area:Math.PI*c.r*c.r,perimeter:2*Math.PI*c.r,circularity:1,kind:'圆形补全',boundary:[]})}let unexplained=boundary.filter(p=>!circles.some(c=>Math.abs(Math.hypot(p.x-c.x,p.y-c.y)-c.r)<c.tol*1.5)).length;if(unexplained>10)skipped++;continue}base.included=false;base.kind='待复核 / 默认跳过';}if(opt.edge&&edge){base.included=false;base.kind='边缘相接 / 待复核'}results.push(base)}results.sort((a,b)=>b.area-a.area);results.forEach((r,i)=>r.id=i+1);return{results,labels,skipped,components}}
+function scanTwice(mask,w,h,opt){
+const first=analyze(mask,w,h,opt);first.results.forEach(p=>p.pass=1);
+if(!opt.twoPass)return first;
+const remaining=mask.slice(),removed=new Uint8Array(mask.length),accepted=first.results.filter(p=>p.included),ids=new Set(accepted.filter(p=>!p.r).map(p=>p.component));
+for(let i=0;i<remaining.length;i++)if(ids.has(first.labels[i])){remaining[i]=0;removed[i]=1}
+for(const p of accepted.filter(p=>p.r))for(let y=Math.max(0,Math.floor(p.y-p.r-1));y<=Math.min(h-1,Math.ceil(p.y+p.r+1));y++)for(let x=Math.max(0,Math.floor(p.x-p.r-1));x<=Math.min(w-1,Math.ceil(p.x+p.r+1));x++)if(first.labels[y*w+x]===p.component && (x-p.x)**2+(y-p.y)**2<=p.r**2){remaining[y*w+x]=0;removed[y*w+x]=1}
+const second=analyze(remaining,w,h,opt),offset=first.components;
+// A reconstructed second-pass circle must not mostly recover an erased particle.
+const extra=second.results.filter(p=>{if(!p.included)return false;if(p.r){let total=0,overlap=0;for(let y=Math.max(0,Math.floor(p.y-p.r));y<=Math.min(h-1,Math.ceil(p.y+p.r));y++)for(let x=Math.max(0,Math.floor(p.x-p.r));x<=Math.min(w-1,Math.ceil(p.x+p.r));x++)if((x-p.x)**2+(y-p.y)**2<=p.r*p.r){total++;overlap+=removed[y*w+x]}if(total&&overlap/total>.25)return false}return true});
+const recovered=new Set(extra.map(p=>p.component));const superseded=new Set();for(let i=0;i<mask.length;i++)if(recovered.has(second.labels[i]))superseded.add(first.labels[i]);
+const results=first.results.filter(p=>p.included||!superseded.has(p.component));for(const p of extra){p.pass=2;p.component+=offset;results.push(p)}
+const labels=first.labels;for(let i=0;i<labels.length;i++)if(recovered.has(second.labels[i]))labels[i]=second.labels[i]+offset;
+results.sort((a,b)=>b.area-a.area);results.forEach((p,i)=>p.id=i+1);return{results,labels,components:first.components+second.components,skipped:first.skipped,secondPassCount:extra.length,remainingMask:remaining};
+}
+function detectFooter(gray,w,h,known){
+let crop=Number.isInteger(known)&&known>0&&known<h*.3?known:0;
+if(!crop){for(let y=Math.floor(h*.8);y<h-8;y++){let ok=true;for(let row=y;row<y+6;row++){let black=0;for(let x=0;x<w;x++)black+=gray[row*w+x]<25;if(black/w<.72){ok=false;break}}if(ok){crop=h-y;break}}}
+if(!crop){for(let y=Math.floor(h*.75);y<h-12;y++){let bright=0,above=0;for(let x=0;x<w;x++){bright+=gray[y*w+x]>225;above+=gray[(y-1)*w+x]>225}if(bright/w<.9||above/w>.7)continue;let valid=true;for(let yy=y;yy<Math.min(h,y+10);yy++){let count=0;for(let x=0;x<w;x++)count+=gray[yy*w+x]>210;if(count/w<.8){valid=false;break}}if(valid){crop=h-y;break}}}
+let bar=null;if(crop){for(let y=h-crop;y<h;y++){let start=-1;for(let x=Math.floor(w*.5);x<=w;x++){let white=x<w&&gray[y*w+x]>220;if(white&&start<0)start=x;if(!white&&start>=0){let length=x-start;if(length>=30&&length<w*.45&&(!bar||length>bar.pixels)){let rows=0;for(let yy=Math.max(h-crop,y-2);yy<=Math.min(h-1,y+2);yy++){let filled=0;for(let xx=start;xx<x;xx++)filled+=gray[yy*w+xx]>200;if(filled/length>.95)rows++}if(rows>=3)bar={x:start,y,pixels:length}}start=-1}}}}
+return{crop,bar};
+}
+const api={smooth,otsu,analyze,fitCircles,scanTwice,detectFooter};if(typeof module!=='undefined')module.exports=api;else root.Engine=api;
+})(globalThis);
+</script><script>/* Browser-local baseline TIFF reader. No upload or external dependencies. */
+(function(root){
+function unpack(src,expected){let out=new Uint8Array(expected),p=0;for(let i=0;i<src.length&&p<expected;){let n=src[i++];if(n<=127){n++;if(i+n>src.length||p+n>expected)throw Error('PackBits 数据损坏');out.set(src.subarray(i,i+n),p);p+=n;i+=n}else if(n>128){n=257-n;if(i>=src.length||p+n>expected)throw Error('PackBits 数据损坏');out.fill(src[i++],p,p+n);p+=n}}if(p!==expected)throw Error('TIFF 像素数据不完整');return out}
+function lzw(src,expected){let out=new Uint8Array(expected),table=[],bit=0,size=9,next=258,prev=null,p=0;function reset(){table=Array.from({length:256},(_,i)=>Uint8Array.of(i));size=9;next=258;prev=null}reset();while(bit+size<=src.length*8){let code=0;for(let k=0;k<size;k++,bit++)code=(code<<1)|((src[bit>>3]>>(7-(bit&7)))&1);if(code===256){reset();continue}if(code===257)break;let entry=table[code];if(!entry&&code===next&&prev){entry=new Uint8Array(prev.length+1);entry.set(prev);entry[prev.length]=prev[0]}if(!entry)throw Error('LZW 编码损坏');if(p+entry.length>expected)throw Error('LZW 数据长度异常');out.set(entry,p);p+=entry.length;if(prev&&next<4096){let item=new Uint8Array(prev.length+1);item.set(prev);item[prev.length]=entry[0];table[next++]=item;if(next===(1<<size)-1&&size<12)size++}prev=entry;if(p===expected)break}if(p!==expected)throw Error('LZW 像素数据不完整');return out}
+function cSafe(n){return n>8&&n<1000000}
+async function decode(buffer){let d=new DataView(buffer),bytes=new Uint8Array(buffer);if(buffer.byteLength<8)throw Error('TIFF 文件不完整');let le=d.getUint16(0)===0x4949;if(!le&&d.getUint16(0)!==0x4d4d)throw Error('不是有效的 TIFF 文件');const u16=p=>d.getUint16(p,le),u32=p=>d.getUint32(p,le);if(u16(2)!==42)throw Error('暂不支持 BigTIFF，请导出为标准 TIFF');let pos=u32(4),tags={},instrumentText='';if(pos+2>bytes.length)throw Error('TIFF 目录损坏');let count=u16(pos);if(pos+2+count*12+4>bytes.length)throw Error('TIFF 目录不完整');for(let i=0;i<count;i++){let p=pos+2+i*12,tag=u16(p),type=u16(p+2),n=u32(p+4),sz=({1:1,3:2,4:4})[type];if(tag===37500&&cSafe(n)){let off=n<=4?p+8:u32(p+8);if(off+n<=bytes.length){let data=bytes.subarray(off,off+n);if(new TextDecoder().decode(data.subarray(0,7))==='UNICODE')instrumentText=new TextDecoder('utf-16le').decode(data.subarray(8))}}if(!sz)continue;if(n>1000000)throw Error('TIFF 标签长度异常');let off=n*sz<=4?p+8:u32(p+8);if(off+n*sz>bytes.length)throw Error('TIFF 标签超出文件范围');tags[tag]=Array.from({length:n},(_,k)=>sz===1?bytes[off+k]:sz===2?u16(off+k*2):u32(off+k*4))}let get=(t,f)=>tags[t]?.[0]??f,w=get(256,0),h=get(257,0),bits=get(258,1),samples=get(277,1),photo=get(262,1),compression=get(259,1),predictor=get(317,1),format=get(339,1),orientation=get(274,1);if(!w||!h||w*h>24000000)throw Error('图像超过 2400 万像素或尺寸无效，请裁剪后导入（不会自动缩小原图）');if(tags[322]||tags[324])throw Error('暂不支持分块 TIFF，请导出为条带 TIFF');if(get(284,1)!==1)throw Error('暂不支持分平面 TIFF，请导出为交错 RGB 或灰度 TIFF');if(![1,8,16,32].includes(bits)||(tags[258]||[]).some(b=>b!==bits))throw Error('暂不支持此 TIFF 位深');if(![0,1,2,3].includes(photo))throw Error('暂不支持此 TIFF 色彩空间，请导出为灰度或 RGB');if((photo===2&&samples<3)||samples>4||(bits===1&&samples!==1))throw Error('TIFF 通道配置不支持');if(format!==1&&!(format===3&&bits===32))throw Error('暂不支持有符号 TIFF，请导出为无符号灰度 TIFF');if(![1,2].includes(predictor)||(predictor===2&&(bits===1||format===3)))throw Error('暂不支持此 TIFF 预测编码');if(orientation<1||orientation>8)throw Error('TIFF 方向标签无效');let offsets=tags[273],sizes=tags[279],rows=get(278,h),rowBytes=Math.ceil(w*samples*bits/8);if(!offsets||!sizes||offsets.length!==sizes.length||!rows)throw Error('TIFF 条带信息缺失');let raw=new Uint8Array(rowBytes*h);for(let i=0;i<Math.ceil(h/rows);i++){let off=offsets[i],size=sizes[i],nrows=Math.min(rows,h-i*rows),expected=rowBytes*nrows;if(off===undefined||off+size>bytes.length)throw Error('TIFF 条带数据不完整');let src=bytes.subarray(off,off+size),out;if(compression===1)out=src;else if(compression===32773)out=unpack(src,expected);else if(compression===5)out=lzw(src,expected);else if(compression===8||compression===32946){if(typeof DecompressionStream==='undefined')throw Error('此浏览器不支持解压，请使用新版 Chrome 或 Edge');const reader=new Blob([src]).stream().pipeThrough(new DecompressionStream('deflate')).getReader();out=new Uint8Array(expected);let at=0;while(true){let r=await reader.read();if(r.done)break;if(at+r.value.length>expected){await reader.cancel();throw Error('TIFF 解压数据过长')}out.set(r.value,at);at+=r.value.length}if(at!==expected)throw Error('TIFF 解压数据不完整')}else throw Error('暂不支持此 TIFF 压缩方式（'+compression+'），请另存为无压缩或 LZW TIFF');if(out.length<expected)throw Error('TIFF 像素数据不完整');raw.set(out.subarray(0,expected),i*rows*rowBytes)}let rd=new DataView(raw.buffer),b=bits/8;const read=(p)=>bits===8?raw[p]:bits===16?rd.getUint16(p,le):format===3?rd.getFloat32(p,le):rd.getUint32(p,le);if(predictor===2){for(let y=0;y<h;y++)for(let x=samples;x<w*samples;x++){let p=y*rowBytes+x*b,v=read(p)+read(p-samples*b);if(bits===8)raw[p]=v;else if(bits===16)rd.setUint16(p,v&65535,le);else rd.setUint32(p,v>>>0,le)}}let min=Infinity,max=-Infinity;if(bits>8&&photo!==3){for(let y=0;y<h;y++)for(let x=0;x<w;x++)for(let c=0;c<(photo===2?3:1);c++){let v=read(y*rowBytes+(x*samples+c)*b);if(Number.isFinite(v)){min=Math.min(min,v);max=Math.max(max,v)}}}let norm=v=>bits<=8?v:!Number.isFinite(v)||max===min?0:Math.round((v-min)*255/(max-min));let ow=orientation>=5?h:w,oh=orientation>=5?w:h,rgba=new Uint8ClampedArray(ow*oh*4);const cmap=tags[320];if(photo===3&&(!cmap||cmap.length<3*2**bits))throw Error('TIFF 调色板缺失');for(let y=0;y<h;y++)for(let x=0;x<w;x++){let values=[];for(let c=0;c<samples;c++)values.push(bits===1?(raw[y*rowBytes+(x>>3)]>>(7-(x&7)))&1:read(y*rowBytes+(x*samples+c)*b));let r,g,bl;if(photo===2){[r,g,bl]=values.map(norm)}else if(photo===3){let v=values[0],n=2**bits;r=cmap[v]/257;g=cmap[v+n]/257;bl=cmap[v+2*n]/257}else{r=bits===1?values[0]*255:norm(values[0]);if(photo===0)r=255-r;g=bl=r}let xx=x,yy=y;if(orientation===2)xx=w-1-x;if(orientation===3){xx=w-1-x;yy=h-1-y}if(orientation===4)yy=h-1-y;if(orientation===5){xx=y;yy=x}if(orientation===6){xx=h-1-y;yy=x}if(orientation===7){xx=h-1-y;yy=w-1-x}if(orientation===8){xx=y;yy=w-1-x}let p=(yy*ow+xx)*4;rgba[p]=r;rgba[p+1]=g;rgba[p+2]=bl;rgba[p+3]=255}let pixelMatch=instrumentText.match(/\$CM_PIXEL_SIZE=([\d.]+)(nm|[µμu]m|mm)/),barMatch=instrumentText.match(/\$SM_PNU_HEIGHT=(\d+)/);let pixelUm=pixelMatch?Number(pixelMatch[1])*({nm:.001,mm:1000}[pixelMatch[2]]||1):null;return{pixelUm:orientation===1?pixelUm:null,footer:orientation===1&&barMatch?Number(barMatch[1]):null,width:ow,height:oh,rgba,bits,multiplePages:u32(pos+2+count*12)!==0,normalized:bits>8}}
+const api={decode};if(typeof module!=='undefined')module.exports=api;else root.TiffReader=api;
+})(globalThis);
+</script><script>const $=id=>document.getElementById(id),canvas=$('canvas'),ctx=canvas.getContext('2d'),originalCanvas=$('originalCanvas'),originalCtx=originalCanvas.getContext('2d');let original,gray,filtered,mask,analysis=null,w=0,h=0,fullH=0,view='overlay',calibrating=false,lineStart=null,lineEnd=null,dirty=true,compareMode=false,filterUndoIds=new Set();
+let selectedId=null;
+const value=id=>Number($(id).value);const status=s=>$('status').textContent=s;
+function scale(){let v=value('length')/value('pixels');return Number.isFinite(v)&&v>0?v:null}
+function scaleLabel(){let s=scale();$('scale').textContent=s?`标尺 ${value('pixels').toFixed(2)} px = ${value('length')} ${$('unit').value}；1 px = ${s.toPrecision(5)} ${$('unit').value}`:'请输入有效的正数标定值';if(analysis)renderTable()}
+let gradientMap;
+function getGradient(){return gradientMap ??= imageGradient(gray,w,h)}
+function isGradientPreview(){return view==='gradient'}
+$('previewMarkup').onchange=draw;
+
+function update(){gradientMap=null;if(manualMode)stopManualMode();if(!gray)return;h=Math.max(1,fullH-Math.max(0,Math.min(fullH-1,Math.floor(value('crop')||0))));filtered=Engine.smooth(gray.subarray(0,w*h),w,h,value('blur'));const contrast=value('contrast')/10;for(let i=0;i<filtered.length;i++)filtered[i]=Math.max(0,Math.min(255,(filtered[i]-128)*contrast+128));mask=new Uint8Array(w*h);for(let i=0;i<mask.length;i++)mask[i]=$('invert').checked?+(filtered[i]<=value('threshold')):+(filtered[i]>value('threshold'));analysis=null;selectedId=null;dirty=true;filterUndoIds.clear();$('filterLowCirc').disabled=true;$('restoreCirc').disabled=true;$('filterInfo').textContent='';$('rows').innerHTML='';for(const id of ['count','mean','median','volumeMedian','volumeSpan','circ'])$(id).textContent='—';renderStats();renderCharts();draw();status('预览已更新。点击「识别颗粒」。')}
+function load(image,name,meta={}){let maxPixels=24000000;if(image.width*image.height>maxPixels){throw Error('图像超过 2400 万像素，请裁剪后导入，以保留原始测量分辨率。')}stopManualMode();manualParticles.length=0;$('undoParticle').disabled=true;w=image.width;fullH=image.height;let tmp=document.createElement('canvas');tmp.width=w;tmp.height=fullH;tmp.getContext('2d').drawImage(image,0,0);original=tmp;let data=tmp.getContext('2d').getImageData(0,0,w,fullH).data;gray=new Uint8Array(w*fullH);for(let i=0;i<gray.length;i++)gray[i]=Math.round(.299*data[i*4]+.587*data[i*4+1]+.114*data[i*4+2]);$('filename').textContent=name;let detected=Engine.detectFooter(gray,w,fullH,meta.footer);$('crop').value=detected.crop;lineStart=lineEnd=null;
+$('pixels').value='';$('length').value='';
+if(detected.bar){let b=detected.bar;$('pixels').value=b.pixels;lineStart={x:b.x,y:b.y};lineEnd={x:b.x+b.pixels,y:b.y};}
+if(meta.pixelUm>0){$('unit').value='μm';if(detected.bar){$('length').value=Number((detected.bar.pixels*meta.pixelUm).toPrecision(8))}else{$('pixels').value=1;$('length').value=meta.pixelUm}}
+update();scaleLabel();status(meta.pixelUm>0?`自动标定：${$('pixels').value} px = ${$('length').value} μm；识别时排除底部 ${detected.crop} px（信息栏保留显示）。`:`识别时排除底部 ${detected.crop} px（信息栏保留显示）。${detected.bar?'检测到标尺 '+detected.bar.pixels+' px，请输入实际长度。':'未找到标定数据，请手动画标尺。'}`)}
+function resize(){if(!w)return;let z=value('zoom');for(const [stage,cv] of [[$('stage'),canvas],[$('originalStage'),originalCanvas]]){if(stage.hidden)continue;let fit=Math.max(.001,Math.min((stage.clientWidth-24)/w,(stage.clientHeight-24)/fullH));cv.toggleAttribute('data-zoomed',fit*z>1);cv.style.width=w*fit*z+'px';cv.style.height=fullH*fit*z+'px'}}
+function centerParticle(stage,cv,p){if(stage.hidden)return;const r=cv.getBoundingClientRect(),s=stage.getBoundingClientRect();stage.scrollLeft+=r.left-s.left+p.x*r.width/w-stage.clientWidth/2;stage.scrollTop+=r.top-s.top+p.y*r.height/fullH-stage.clientHeight/2}
+function syncStages(src,dst){if(!compareMode||src.hidden||dst.hidden)return;const sx=src.scrollWidth-src.clientWidth,sy=src.scrollHeight-src.clientHeight,dx=dst.scrollWidth-dst.clientWidth,dy=dst.scrollHeight-dst.clientHeight;const x=sx>0?src.scrollLeft/sx:0,y=sy>0?src.scrollTop/sy:0;if(Math.abs(dst.scrollLeft-x*dx)>1)dst.scrollLeft=x*dx;if(Math.abs(dst.scrollTop-y*dy)>1)dst.scrollTop=y*dy}
+let stageSyncBusy=false;
+for(const [src,dst] of [[$('stage'),$('originalStage')],[$('originalStage'),$('stage')]])src.addEventListener('scroll',()=>{if(stageSyncBusy)return;stageSyncBusy=true;syncStages(src,dst);requestAnimationFrame(()=>stageSyncBusy=false)});
+$('compareToggle').onclick=()=>{compareMode=!compareMode;$('imageStack').classList.toggle('compare',compareMode);$('originalStage').hidden=!compareMode;$('compareToggle').classList.toggle('active',compareMode);$('compareToggle').setAttribute('aria-pressed',String(compareMode));resize();if(analysis&&selectedId){let p=analysis.results.find(p=>p.id===selectedId);if(p)requestAnimationFrame(()=>{centerParticle($('stage'),canvas,p);centerParticle($('originalStage'),originalCanvas,p)})}};
+
+function drawParticleOutline(target, particle, color) {
+  target.strokeStyle=target.fillStyle=color;
+  target.lineWidth=Math.max(3,w/450);
+  if(particle.r){
+    target.setLineDash(particle.manual?[]:[Math.max(7,w/180),Math.max(5,w/260)]);
+    target.beginPath();
+    target.arc(particle.x,particle.y,particle.r,0,2*Math.PI);
+    target.stroke();
+    target.setLineDash([]);
+  }else{
+    const width=target.lineWidth;
+    for(const point of particle.boundary)target.fillRect(point.x-width/2,point.y-width/2,width,width);
+  }
+}
+function drawSelectionFrame(target, particle) {
+  const radius=particle.r||Math.sqrt(particle.area/Math.PI);
+  let left=particle.x-radius,right=particle.x+radius,top=particle.y-radius,bottom=particle.y+radius;
+  if(!particle.r){
+    for(const point of particle.boundary){
+      left=Math.min(left,point.x);right=Math.max(right,point.x);
+      top=Math.min(top,point.y);bottom=Math.max(bottom,point.y);
+    }
+  }
+  target.strokeStyle='#73bfff';
+  target.lineWidth=Math.max(2,w/600);
+  target.setLineDash([6,4]);
+  target.strokeRect(left-6,top-6,right-left+12,bottom-top+12);
+  target.setLineDash([]);
+}
+function drawOriginalSelection(target, particle) {
+  if(!particle)return;
+  drawParticleOutline(target,particle,'#ff202e');
+  drawSelectionFrame(target,particle);
+}
+
+function draw(){if(!original)return;const selected=analysis?.results.find(p=>p.id===selectedId);canvas.width=w;canvas.height=fullH;originalCanvas.width=w;originalCanvas.height=fullH;originalCtx.drawImage(original,0,0);drawManualOutlines(originalCtx);drawOriginalSelection(originalCtx,selected);ctx.drawImage(original,0,0);if(view==='gradient'){
+  const {edge:edges}=getGradient(), im=ctx.getImageData(0,0,w,h);
+  for(let i=0;i<edges.length;i++){
+    if(edges[i]<4)continue;
+    const alpha=Math.min(.91,edges[i]/20), strong=Math.min(1,edges[i]/16), k=i*4;
+    im.data[k]=im.data[k]*(1-alpha)+255*strong*alpha;
+    im.data[k+1]=im.data[k+1]*(1-alpha)+(203+22*strong)*alpha;
+    im.data[k+2]=im.data[k+2]*(1-alpha)+(244-167*strong)*alpha;
+  }
+  ctx.putImageData(im,0,0);
+}else if(view==='binary'||view==='overlay'){let im=ctx.createImageData(w,h);for(let i=0;i<mask.length;i++){let v=mask[i]*255;im.data[i*4]=im.data[i*4+1]=im.data[i*4+2]=v;im.data[i*4+3]=255}ctx.putImageData(im,0,0)}else{
+  ctx.drawImage(original,0,0);
+  drawManualOutlines(ctx);
+  drawOriginalSelection(ctx,selected);
+}
+if((view==='overlay'||(isGradientPreview()&&$('previewMarkup').checked))&&analysis){
+  for(const p of analysis.results){
+    ctx.globalAlpha=p.included||p===selected?1:.45;
+    drawParticleOutline(ctx,p,p.manual&&p!==selected?'#27dfc2':'#ff202e');
+    ctx.font='bold '+Math.max(10,w/100)+'px sans-serif';
+    ctx.fillText(p.id,p.x+2,p.y-2);
+  }
+  ctx.globalAlpha=1;
+  if(selected)drawSelectionFrame(ctx,selected);
+}
+if(lineStart&&lineEnd&&lineStart.y<canvas.height&&lineEnd.y<canvas.height){ctx.strokeStyle='#7dc6ff';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(lineStart.x,lineStart.y);ctx.lineTo(lineEnd.x,lineEnd.y);ctx.stroke();
+const measured=Math.hypot(lineEnd.x-lineStart.x,lineEnd.y-lineStart.y),fontSize=Math.max(15,w/65),pad=fontSize*.45;
+ctx.font=`600 ${fontSize}px sans-serif`;
+const label=measured.toFixed(2)+' px',boxW=ctx.measureText(label).width+pad*2,boxH=fontSize+pad*2;
+let lx=Math.max(0,Math.min(w-boxW,(lineStart.x+lineEnd.x)/2-boxW/2));
+let ly=Math.max(0,Math.min(canvas.height-boxH,Math.min(lineStart.y,lineEnd.y)-boxH-6));
+ctx.fillStyle='rgba(8,23,32,.92)';ctx.fillRect(lx,ly,boxW,boxH);ctx.fillStyle='#9edaff';ctx.textBaseline='top';ctx.fillText(label,lx+pad,ly+pad);ctx.textBaseline='alphabetic';
+for(const p of [lineStart,lineEnd]){ctx.beginPath();ctx.arc(p.x,p.y,Math.max(3,w/400),0,Math.PI*2);ctx.fill()}
+}resize()}
+const resultSort = {key:'diameter',direction:-1};
+const methodOrder = new Intl.Collator('zh-CN',{numeric:true});
+function resultSortValue(p,key){
+  if(key==='diameter') return p.area;
+  if(key==='kind') return p.manual?p.kind:'第 '+(p.pass||1)+' 轮 · '+p.kind;
+  return p[key];
+}
+function orderedResults(){
+  if(!analysis)return [];
+  const {key,direction}=resultSort;
+  return analysis.results.slice().sort((a,b)=>{
+    const group=Number(b.included)-Number(a.included);
+    if(group)return group;
+    const left=resultSortValue(a,key),right=resultSortValue(b,key);
+    if(left==null || right==null)return Number(left==null)-Number(right==null)||a.id-b.id;
+    const order=key==='kind'?methodOrder.compare(left,right):left-right;
+    return direction*order||a.id-b.id;
+  });
+}
+for(const button of document.querySelectorAll('[data-sort]')){
+  button.onclick=()=>{
+    const key=button.dataset.sort;
+    resultSort.direction=key===resultSort.key?-resultSort.direction:['id','kind'].includes(key)?1:-1;
+    resultSort.key=key;
+    const previous=document.querySelector('.results th[aria-sort]');
+    previous?.removeAttribute('aria-sort');
+    button.parentElement.setAttribute('aria-sort',resultSort.direction===1?'ascending':'descending');
+    renderResultRows();
+    $('rows').closest('.tablewrap').scrollTop=0;
+  };
+}
+for(const menu of document.querySelectorAll('.menu-items'))menu.addEventListener('click',event=>{
+  if(event.target.closest('button'))event.currentTarget.closest('details').open=false;
+});
+function isSmallParticle(p){return 2*Math.sqrt(p.area/Math.PI)<16} 
+function renderResultRows(){const s=scale(),unit=$('unit').value;if(!s)return;$('rows').innerHTML=orderedResults().map(p=>`<tr class="${p.included?'':'excluded'} ${p.id===selectedId?'selected':''}" data-id="${p.id}"><td><input type="checkbox" ${p.included?'checked':''} aria-label="纳入颗粒 ${p.id}"></td><td><button class="locate" data-focus="${p.id}" title="放大并定位颗粒">${String(p.id).padStart(3,'0')}</button></td><td>${(2*Math.sqrt(p.area/Math.PI)*s).toFixed(3)} ${unit}</td><td>${(p.area*s*s).toFixed(3)} ${unit}²</td><td>${(p.perimeter*s).toFixed(3)} ${unit}</td><td>${p.circularity===null?'—（估计边界）':p.circularity.toFixed(4)}${p.r?' *':''}</td><td class="${p.r?'badge':''}">${p.manual?p.kind:'第 '+(p.pass||1)+' 轮 · '+p.kind}${p.r&&!p.manual?' · 可见弧 '+Math.round(p.coverage*100)+'%':''}</td></tr>`).join('');}
+function summaryMetrics(stat, active=analysis.results.filter(p=>p.included)){
+  const unit=$('unit').value;
+  const measured=active.filter(p=>Number.isFinite(p.circularity)&&!p.r&&p.kind!=='分离轮廓（估计）');
+  const length=d=>Number.isFinite(d)?niceNumber(d)+' '+unit:'—';
+  return {
+    count:String(active.length),
+    mean:length(stat.mean),
+    median:length(stat.number[1]),
+    volumeMedian:length(stat.volume[1]),
+    volumeSpan:niceNumber(stat.spanVolume),
+    circ:measured.length?(measured.reduce((sum,p)=>sum+p.circularity,0)/measured.length).toFixed(3):'—'
+  };
+}
+function renderTable(redraw=false){
+  if(!analysis)return;
+  const active=analysis.results.filter(p=>p.included), calibration=scale();
+  const stat=particleSummary(active,calibration);
+  for(const [id,text] of Object.entries(summaryMetrics(stat,active)))$(id).textContent=text;
+  renderStats(stat);
+  if(calibration)renderResultRows();
+  else{
+    $('rows').replaceChildren();
+    status('请先输入有效标定长度。');
+  }
+  updateCutoffLabel();
+  $('restoreCirc').disabled=filterUndoIds.size===0;
+  if(redraw)draw();
+  renderCharts(stat);
+}
+function setIncluded(id,shouldInclude){if(!analysis)return false;const p=analysis.results.find(p=>p.id===id);if(!p)return false;p.included=shouldInclude;filterUndoIds.delete(id);renderTable(true);status(`颗粒 ${String(id).padStart(3,'0')}：${shouldInclude?'已纳入':'已排除'} · ↑↓ 切换，空格切换，Delete 排除，A 恢复`);return true}
+function toggle(id){const p=analysis?.results.find(p=>p.id===id);if(p)setIncluded(id,!p.included)}
+function updateCutoffLabel(){const n=value('circCutoff');const valid=Number.isFinite(n)&&n>=0&&n<=1&&$('circCutoff').value!=='';$('filterLowCirc').textContent=valid?`排除圆度 < ${n.toFixed(2)}`:'请输入 0–1';$('filterLowCirc').title=valid?'只排除当前纳入且有效二维圆度严格小于 '+n.toFixed(2)+' 的颗粒':'阈值必须在 0 到 1 之间';$('filterLowCirc').disabled=!analysis||!valid}
+$('circCutoff').addEventListener('input',updateCutoffLabel);
+
+$('filterLowCirc').onclick=()=>{if(!analysis)return;const limit=value('circCutoff');if(!Number.isFinite(limit)||$('circCutoff').value===''||limit<0||limit>1){status('圆度阈值必须在 0～1 之间');return}let newly=0,protectedCount=0;for(const p of analysis.results){if(p.included&&p.circularity!==null&&Number.isFinite(p.circularity)&&p.circularity<limit){if($('protectSmallCirc').checked&&isSmallParticle(p)){protectedCount++;continue}p.included=false;filterUndoIds.add(p.id);newly++}}$('filterInfo').textContent=`本次排除 ${newly} 颗（圆度 < ${limit.toFixed(2)}）；保留小颗粒 ${protectedCount} 颗；累计可撤销 ${filterUndoIds.size} 颗。`;draw();renderTable()};
+$('restoreCirc').onclick=()=>{if(!analysis||!filterUndoIds.size)return;let n=0;for(const p of analysis.results)if(filterUndoIds.has(p.id)){p.included=true;filterUndoIds.delete(p.id);n++;}$('filterInfo').textContent=`已恢复本次过滤的 ${n} 颗`;draw();renderTable()};
+function focusParticle(id){if(!analysis)return;let p=analysis.results.find(p=>p.id===id);if(!p)return;selectedId=id;document.querySelectorAll('#rows tr').forEach(row=>row.classList.toggle('selected',Number(row.dataset.id)===id));if(!isGradientPreview())view='overlay';setTabs();const stage=$('stage'),fit=Math.min((stage.clientWidth-24)/w,(stage.clientHeight-24)/fullH),radius=p.r||Math.sqrt(p.area/Math.PI);let z=Math.max(2,Math.min(16,Math.min(stage.clientWidth,stage.clientHeight)*.45/(2*radius*fit)));let option=$('zoom').querySelector('[data-inspect]');if(!option){option=document.createElement('option');option.dataset.inspect='true';$('zoom').appendChild(option)}option.value=z;option.textContent='检查 '+z.toFixed(1)+'×';$('zoom').value=String(z);draw();requestAnimationFrame(()=>{centerParticle(stage,canvas,p);if(compareMode)centerParticle($('originalStage'),originalCanvas,p)});status(`颗粒 ${String(id).padStart(3,'0')}（${p.kind}） · 当前${p.included?'已纳入':'已排除'}。空格切换，Delete 排除，A 恢复。`)}
+$('rows').onclick=e=>{const tr=e.target.closest('tr');if(!tr)return;if(e.target.matches('input[type=checkbox]')){selectedId=Number(tr.dataset.id);toggle(selectedId)}else focusParticle(Number(tr.dataset.id))};
+$('analyze').onclick = () => {
+  if(!mask || !scale()){status('请导入图片，并输入有效标定值。');return}
+  const minArea=value('minArea');
+  if(!Number.isFinite(minArea)||minArea<3){status('最小面积应不小于 3 px²。');return}
+  $('analyze').disabled=true;
+  const multiPass=$('twoPass').checked;
+  status(multiPass?'正在进行四轮识别…':'正在识别颗粒轮廓…');
+  setTimeout(()=>{
+    try{
+      const options={twoPass:multiPass,minArea,edge:$('edge').checked,complete:$('complete').checked,
+        missing:value('missing')/100,threshold:value('threshold'),invert:$('invert').checked};
+      const result=Engine.scanTwice(mask,w,h,options);
+      let fourth=0;
+      if(multiPass){
+        splitGrayRegions(result,gray,mask,w,h,options,manualParticles);
+        fourth=recoverGradientCircles(result,gray,w,h,options,manualParticles,getGradient());
+      }
+      let nextId=result.results.reduce((id,p)=>Math.max(id,p.id),0)+1;
+      for(const p of manualParticles){p.id=nextId++;result.results.push(p)}
+      analysis=result;
+      selectedId=null;
+      filterUndoIds.clear();
+      $('filterInfo').textContent='';
+      dirty=false;
+      if(!isGradientPreview())view='overlay';
+      setTabs();renderTable(true);
+      const included=result.results.filter(p=>p.included).length;
+      const counts=multiPass
+        ? '第二轮新增 '+result.secondPassCount+' 颗 · 第三轮分离 '+result.thirdPassCount+' 颗 · 第四轮补识 '+fourth+' 颗'
+        : '第一轮识别完成';
+      status(counts+' · 共纳入 '+included+' 颗 · 待复核 '+(result.results.length-included)+' 颗');
+    }catch(e){status('分析失败：'+e.message)}
+    finally{$('analyze').disabled=false}
+  },30);
+};
+function setTabs(){$('previewMarkupLabel').hidden=!isGradientPreview();$('gradientKey').hidden=view!=='gradient';document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view))}document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{view=b.dataset.view;setTabs();draw()});
+for(const id of ['blur','contrast','threshold','crop','invert'])$(id).oninput=()=>{$('blurOut').textContent=value('blur')+' px';$('contrastOut').textContent=(value('contrast')/10).toFixed(1);$('thresholdOut').textContent=value('threshold');update()};
+for(const id of ['minArea','edge','complete','missing','twoPass'])$(id).oninput=()=>{$('missingOut').textContent=value('missing')+'%';if(gray)update()};
+for(const id of ['pixels','length','unit'])$(id).oninput=scaleLabel;
+$('otsu').onclick=()=>{if(filtered){$('threshold').value=Engine.otsu(filtered);$('thresholdOut').textContent=value('threshold');update();view='binary';setTabs();draw()}};
+$('zoom').onchange=()=>{resize();if(compareMode)syncStages($('stage'),$('originalStage'))};window.onresize=resize;
+let activeStage = $('stage');
+for (const stage of [$('stage'), $('originalStage')]) {
+  let drag;
+  stage.addEventListener('pointerenter', () => activeStage = stage);
+  stage.addEventListener('contextmenu', event => {
+    if (original) event.preventDefault();
+  });
+  stage.addEventListener('pointerdown', event => {
+    if (!original || event.button !== 2 || drag) return;
+    event.preventDefault();
+    activeStage = stage;
+    drag = {id: event.pointerId, x: event.clientX, y: event.clientY,
+            left: stage.scrollLeft, top: stage.scrollTop};
+    stage.setPointerCapture(event.pointerId);
+    stage.classList.add('panning');
+  });
+  stage.addEventListener('pointermove', event => {
+    if (drag?.id !== event.pointerId) return;
+    stage.scrollLeft = drag.left + drag.x - event.clientX;
+    stage.scrollTop = drag.top + drag.y - event.clientY;
+  });
+  stage.addEventListener('lostpointercapture', event => {
+    if (drag?.id !== event.pointerId) return;
+    drag = undefined;
+    stage.classList.remove('panning');
+  });
+}
+
+function stepZoom(direction) {
+  if (!original) return;
+  const stage = activeStage.hidden ? $('stage') : activeStage;
+  const cv = stage.querySelector('canvas');
+  const viewport = stage.getBoundingClientRect();
+  const centerX = viewport.left + stage.clientWidth / 2;
+  const centerY = viewport.top + stage.clientHeight / 2;
+  const before = cv.getBoundingClientRect();
+  const x = (centerX - before.left) / before.width;
+  const y = (centerY - before.top) / before.height;
+  const zoom = $('zoom');
+  const level = Math.max(1, Math.min(16, Math.round(value('zoom') * 1.25 ** direction * 100) / 100));
+  let option = zoom.querySelector('[data-step-zoom]');
+  if (!option) {
+    option = document.createElement('option');
+    option.dataset.stepZoom = '';
+    zoom.appendChild(option);
+  }
+  option.value = level;
+  option.textContent = '缩放 ' + level + '×';
+  zoom.value = level;
+  resize();
+  const after = cv.getBoundingClientRect();
+  stage.scrollLeft += after.left + after.width * x - centerX;
+  stage.scrollTop += after.top + after.height * y - centerY;
+  syncStages(stage, stage === $('stage') ? $('originalStage') : $('stage'));
+}
+$('zoomOut').onclick = () => stepZoom(-1);
+$('zoomIn').onclick = () => stepZoom(1);
+window.addEventListener('keydown', event => {
+  if (!original || event.ctrlKey || event.metaKey || event.altKey ||
+      event.target.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"])')) return;
+  if (!['+', '=', '-', '−'].includes(event.key)) return;
+  event.preventDefault();
+  stepZoom(event.key === '+' || event.key === '=' ? 1 : -1);
+});
+
+$('calibrate').onclick=()=>{stopManualMode();calibrating=true;view='original';setTabs();draw();status('在标尺两端按下并拖动；输入对应的实际长度。');canvas.style.cursor='crosshair'};
+function point(e){let r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)*w/r.width,y:(e.clientY-r.top)*canvas.height/r.height}}
+function pickParticle(e,target){if(!analysis)return;let q=pointOn(e,target);if(q.y>=h||q.x<0||q.x>=w)return;let p=analysis.results.find(p=>p.r&&Math.hypot(p.x-q.x,p.y-q.y)<=p.r);if(!p){let id=analysis.labels[Math.floor(q.y)*w+Math.floor(q.x)];p=analysis.results.find(p=>p.component===id&&!p.r)}if(p)focusParticle(p.id)}
+function pointOn(e,target){let r=target.getBoundingClientRect();return{x:(e.clientX-r.left)*w/r.width,y:(e.clientY-r.top)*fullH/r.height}}
+
+
+function imageGradient(gray,width,height){
+  const edge=new Uint8Array(width*height);
+  const smooth=gray.slice(0,width*height);
+  for(let y=1;y<height-1;y++)for(let x=1;x<width-1;x++){
+    const i=y*width+x,t=i-width,b=i+width;
+    smooth[i]=(gray[t-1]+2*gray[t]+gray[t+1]+2*gray[i-1]+4*gray[i]+2*gray[i+1]+gray[b-1]+2*gray[b]+gray[b+1]+8)>>4;
+  }
+  for(let y=1;y<height-1;y++)for(let x=1;x<width-1;x++){
+    const i=y*width+x,t=i-width,b=i+width;
+    const gx=gray[t+1]+2*gray[i+1]+gray[b+1]-gray[t-1]-2*gray[i-1]-gray[b-1];
+    const gy=gray[b-1]+2*gray[b]+gray[b+1]-gray[t-1]-2*gray[t]-gray[t+1];
+    const fine=(Math.abs(gx)+Math.abs(gy))>>3;
+    let broad=0;
+    if(x>=2&&x<width-2&&y>=2&&y<height-2){
+      const dx=smooth[i+2]-smooth[i-2],dy=smooth[i+2*width]-smooth[i-2*width];
+      broad=Math.sqrt(dx*dx+dy*dy);
+    }
+    edge[i]=Math.max(fine,broad>=5?Math.min(26,Math.round(3*broad)):0);
+  }
+  return {edge,smooth};
+}
+
+function recoverGradientCircles(state,gray,width,height,opt,manual,{edge,smooth}=imageGradient(gray,width,height)){
+  const step=2, gridW=Math.ceil(width/step), gridH=Math.ceil(height/step);
+  const occupied=new Uint8Array(width*height);
+  const included=new Set(state.results.filter(p=>p.included&&!p.r).map(p=>p.component));
+  for(let i=0;i<occupied.length;i++)if(included.has(state.labels[i]))occupied[i]=1;
+
+  function markCircle(x,y,r){
+    for(let row=Math.max(0,Math.ceil(y-r));row<=Math.min(height-1,Math.floor(y+r));row++){
+      const dx=Math.sqrt(Math.max(0,r*r-(row-y)**2));
+      occupied.fill(1,row*width+Math.max(0,Math.ceil(x-dx)),row*width+Math.min(width,Math.floor(x+dx)+1));
+    }
+  }
+  for(const p of state.results.concat(manual))if(p.included&&p.r)markCircle(p.x,p.y,p.r);
+
+  // Sobel normals point toward brighter pixels, or toward darker pixels in inverted mode.
+  const strongPoints=[],weakPoints=[],sign=opt.invert?-1:1;
+  for(let y=2;y<height-2;y++)for(let x=2;x<width-2;x++){
+    const i=y*width+x,t=i-width,b=i+width;
+    if(edge[i]<15)continue;
+    let gx=gray[t+1]+2*gray[i+1]+gray[b+1]-gray[t-1]-2*gray[i-1]-gray[b-1];
+    let gy=gray[b-1]+2*gray[b]+gray[b+1]-gray[t-1]-2*gray[t]-gray[t+1];
+    const weak=gx*gx+gy*gy<64*64;
+    if(weak){
+      gx=smooth[i+2]-smooth[i-2];
+      gy=smooth[i+2*width]-smooth[i-2*width];
+      if(gx*gx+gy*gy<36)continue;
+      // A local maximum across the edge lets a broad band cast one row of votes.
+      const offset=Math.abs(gx)>=Math.abs(gy)?1:width;
+      if(edge[i]<edge[i-offset]||edge[i]<edge[i+offset])continue;
+    }
+    const scale=sign/Math.sqrt(gx*gx+gy*gy);
+    (weak?weakPoints:strongPoints).push(x,y,gx*scale,gy*scale);
+  }
+  const votes=new Uint16Array(gridW*gridH), candidates=[];
+  function vote(points,r){
+    for(let i=0;i<points.length;i+=4){
+      const x=Math.round((points[i]+r*points[i+2])/step);
+      const y=Math.round((points[i+1]+r*points[i+3])/step);
+      if(x>1&&x<gridW-2&&y>1&&y<gridH-2&&
+        !occupied[y*step*width+x*step])votes[y*gridW+x]++;
+    }
+  }
+  const minR=Math.max(4,Math.ceil(Math.sqrt(opt.minArea/Math.PI)));
+  const maxR=Math.min(80,Math.floor(Math.min(width,height)/4));
+  const rays=Array.from({length:32},(_,i)=>[Math.cos(i*Math.PI/16),Math.sin(i*Math.PI/16)]);
+  const ringOffsets=d=>rays.map(([dx,dy])=>Math.round(dy*d)*width+Math.round(dx*d));
+  const rings=Array.from({length:maxR+12},(_,r)=>r>=minR
+    ? {inner:ringOffsets(r-2),outer:ringOffsets(r+2),weakInner:ringOffsets(Math.max(1,r-3)),weakOuter:ringOffsets(r+3),mid:ringOffsets(r)}:null);
+  for(let r=minR;r<=maxR;r+=Math.max(1,Math.round(r*.105))){
+    votes.fill(0);
+    vote(strongPoints,r);
+    if(r<=35)vote(weakPoints,r);
+    for(let y=r+4;y<height-r-4;y+=step)for(let x=r+4;x<width-r-4;x+=step){
+      const gx=Math.round(x/step),gy=Math.round(y/step);
+      const i=gy*gridW+gx;
+      if(votes[i]<2 || occupied[gy*step*width+gx*step])continue;
+      const support=votes[i]+votes[i-1]+votes[i+1]+votes[i-gridW]+votes[i+gridW];
+      if(support<Math.max(12,r*.5))continue;
+      if(votes[i]<Math.max(votes[i-1],votes[i+1],votes[i-gridW],votes[i+gridW]))continue;
+      let best;
+      const margin=Math.max(1,Math.round(r*.10));
+      for(let radius=Math.max(minR,r-margin);radius<=r+margin;radius++){
+        const cx=gx*step,cy=gy*step;
+        if(cx-radius-3<0||cy-radius-3<0||cx+radius+3>=width||cy+radius+3>=height)continue;
+        const center=cy*width+cx;
+        const {inner,outer,weakInner,weakOuter,mid}=rings[radius];
+        // Reject poorly supported centers before checking the full circumference.
+        let passed=0;
+        for(let k=0;k<32;k+=4){
+          const fine=sign*(gray[center+inner[k]]-gray[center+outer[k]]);
+          const broad=sign*(smooth[center+weakInner[k]]-smooth[center+weakOuter[k]]);
+          if(fine>=10||broad>=5)passed++;
+        }
+        if(passed<4)continue;
+        let hits=0,strongHits=0,gap=0,leading=0,longest=0,contrast=0,weakContrast=0,bilateral=0;
+        for(let k=0;k<32;k++){
+          const change=sign*(gray[center+inner[k]]-gray[center+outer[k]]);
+          const inside=sign*smooth[center+weakInner[k]],outside=sign*smooth[center+weakOuter[k]];
+          const weakChange=inside-outside;
+          weakContrast+=weakChange;
+          const middle=sign*smooth[center+mid[k]];
+          if(inside-middle>=2 && middle-outside>=2)bilateral++;
+          if(change>=10)strongHits++;
+          if(change>=10 || weakChange>=5){
+            hits++;contrast+=Math.min(35,Math.max(change,weakChange));gap=0;
+          }else{
+            if(!hits)leading++;
+            longest=Math.max(longest,++gap);
+          }
+        }
+        if(hits<26||Math.max(longest,leading+gap)>5)continue;
+        if(strongHits<26 && (radius>32||hits<29||bilateral<22||weakContrast<32*7.25))continue;
+        const score=hits+contrast/30+strongHits/16;
+        if(!best||score>best.score)best={x:cx,y:cy,r:radius,coverage:hits/32,score};
+      }
+      if(best)candidates.push(best);
+    }
+  }
+
+  candidates.sort((a,b)=>b.score-a.score);
+  const recovered=[];
+  for(const p of candidates){
+    if(occupied[p.y*width+p.x])continue;
+    let overlap=0,area=0;
+    for(let dy=-p.r;dy<=p.r;dy++)for(let dx=-p.r;dx<=p.r;dx++){
+      if(dx*dx+dy*dy>p.r*p.r)continue;
+      area++;
+      overlap+=occupied[(p.y+dy)*width+p.x+dx];
+    }
+    if(overlap>area*.12)continue;
+    recovered.push({
+      ...p,area:Math.PI*p.r*p.r,perimeter:2*Math.PI*p.r,
+      pass:4,included:true,circularity:null,kind:'灰度闭合圆边（拟合）'
+    });
+    markCircle(p.x,p.y,p.r);
+  }
+  if(recovered.length){
+    state.results.push(...recovered);
+    state.results.sort((a,b)=>b.area-a.area).forEach((p,i)=>p.id=i+1);
+  }
+  return recovered.length;
+}
+function findGrayCandidates(gray, mask, width, height, invert, reserved, labels, eligible) {
+  const radii = [3,4,5,6,8,10,13,16,18];
+  const rays = Array.from({length:16}, (_,i) => {
+    const angle = 2*Math.PI*i/16;
+    return [Math.cos(angle),Math.sin(angle)];
+  });
+  const polarity = invert ? -1 : 1;
+  const stride = width*height > 4000000 ? 2 : 1;
+  const sample = (x,y) => polarity*gray[Math.round(y)*width+Math.round(x)];
+  const scales = radii.map(r=>{
+    const outer=r+Math.max(2,Math.round(r*.2)),inner=Math.max(1,r-Math.max(1,Math.round(r*.2)));
+    const offsets=d=>rays.map(([dx,dy])=>Math.round(dx*d)+width*Math.round(dy*d));
+    return {r,outer,innerOffsets:offsets(inner),outerOffsets:offsets(outer)};
+  });
+  const candidates = [];
+  for (let y=5;y<height-5;y+=stride) {
+    for (let x=5;x<width-5;x+=stride) {
+      const index=y*width+x; if (!mask[index] || reserved[index] || !eligible[labels[index]]) continue;
+      const center = (2*sample(x,y)+sample(x-1,y)+sample(x+1,y)+sample(x,y-1)+sample(x,y+1))/6;
+      let best;
+      for (const {r,outer,innerOffsets,outerOffsets} of scales) {
+
+        if (x<outer || y<outer || x+outer>=width || y+outer>=height) break;
+        let promising=0;
+        for (let i=0;i<16;i+=4) {
+
+          if (center-polarity*gray[index+outerOffsets[i]]>=9) promising++;
+        }
+        if (promising<2) continue;
+        let support=0, contrast=0, quadrants=0;
+
+        for (let i=0;i<16;i++) {
+
+          const inside = polarity*gray[index+innerOffsets[i]];
+          const outside = polarity*gray[index+outerOffsets[i]];
+          const edge = inside-outside;
+          if (edge<10 || center-outside<13 || inside<center-28) continue;
+          support++;
+          quadrants |= 1<<(i>>2);
+          contrast += Math.min(edge,40);
+        }
+        if (support<11 || quadrants!==15) continue;
+        const score = support+contrast/32;
+        if (!best || score>best.score) best = {x,y,r,score};
+      }
+      if (best) candidates.push(best);
+    }
+  }
+  return candidates.sort((a,b)=>b.score-a.score);
+}
+
+
+function splitGrayRegions(state, gray, mask, width, height, opt, manual = []) {
+  const {labels, results} = state;
+  const owners = new Map(results.filter(p=>!p.r).map(p=>[p.component,p]));
+  const fitted = results.filter(p=>p.r);
+  const reserved = new Uint8Array(mask.length);
+  for (const circle of fitted.concat(manual)) {
+    for (let y=Math.max(0,Math.ceil(circle.y-circle.r));y<=Math.min(height-1,circle.y+circle.r);y++) {
+      const dx = Math.sqrt(Math.max(0,circle.r**2-(y-circle.y)**2));
+      reserved.fill(1,y*width+Math.max(0,Math.ceil(circle.x-dx)),y*width+Math.min(width,Math.floor(circle.x+dx)+1));
+    }
+  }
+  const cuts = new Map(), children = [];
+  const rays = Array.from({length:16},(_,i)=>[Math.cos(i*Math.PI/8),Math.sin(i*Math.PI/8)]);
+  let component = state.components;
+  const eligible=new Uint8Array(state.components+1).fill(1);
+  eligible[0]=0;
+  for(const [label,p] of owners){
+    if(p.kind.includes('边缘') || (p.solidity>.97 && p.circularity>.87))eligible[label]=0;
+  }
+  for (const seed of findGrayCandidates(gray,mask,width,height,opt.invert,reserved,labels,eligible)) {
+    const {x,y,r} = seed, index=y*width+x, group=labels[index], owner=owners.get(group);
+    if (!group || reserved[index] || Math.PI*r*r<opt.minArea) continue;
+    if (owner && (owner.area<2*Math.PI*r*r || owner.kind.includes('边缘'))) continue;
+    if (owner && owner.solidity>.97 && owner.circularity>.87) continue;
+    let outside=0, supported=0;
+    const distances = rays.map(([dx,dy])=>{
+      const at = d=>Math.round(y+dy*d)*width+Math.round(x+dx*d);
+      if (!mask[at(r+2)]) outside++;
+      let best=0, distance=r;
+      for(let d=Math.max(2,Math.floor(.75*r));d<=Math.ceil(1.2*r);d++){
+        const grad=(gray[at(d-1)]-gray[at(d+1)])*(opt.invert?-1:1);
+        if(grad>best){best=grad;distance=d}
+      }
+      if(best>=10) supported++;
+      return best>=10?distance:r;
+    });
+    if(outside<4 || outside===16 || supported<11) continue;
+    const pixels=[];
+    const extent=Math.ceil(Math.max(...distances));
+    let blocked=0;
+    for(let dy=-extent;dy<=extent;dy++) for(let dx=-extent;dx<=extent;dx++){
+      const angle=(Math.atan2(dy,dx)*8/Math.PI+16)%16;
+      const k=Math.floor(angle), t=angle-k;
+      const radius=distances[k]*(1-t)+distances[(k+1)%16]*t;
+      if(dx*dx+dy*dy>radius*radius) continue;
+      const i=(y+dy)*width+x+dx;
+      if(reserved[i]) blocked++;
+      else if(labels[i]===group && mask[i]) pixels.push(i);
+    }
+    if(blocked>pixels.length*.08 || pixels.length<opt.minArea) continue;
+    const clear=supported>=14 && seed.score>=25;
+    if(owner && !clear) continue;
+    // Measure the allocated pixels once. The same pixels are removed from the parent.
+    const childMask=new Uint8Array((2*extent+3)**2), side=2*extent+3;
+    const left=x-extent-1, top=y-extent-1;
+    for(const i of pixels) childMask[(Math.floor(i/width)-top)*side+i%width-left]=1;
+    const pieces=Engine.analyze(childMask,side,side,{minArea:1,edge:false,complete:false}).results;
+    if(pieces.length!==1) continue;
+    const child=pieces[0];
+    child.x+=left; child.y+=top;
+    for(const b of child.boundary){b.x+=left;b.y+=top}
+    child.component=++component; child.pass=3;
+    child.included=clear;
+    child.kind=clear?'灰度分离轮廓（估计）':'灰度圆弧 / 待复核';
+    child.circularity=null;
+    if(!clear){child.r=Math.sqrt(child.area/Math.PI);child.coverage=supported/16;child.perimeter=2*Math.PI*child.r}
+    for(const i of pixels){reserved[i]=1;labels[i]=child.component}
+    if(owner) cuts.set(group,owner);
+    children.push(child);
+  }
+  const remaining=[];
+  for(const [group,parent] of cuts){
+    let left=width,top=height,right=0,bottom=0;
+    for(const b of parent.boundary){left=Math.min(left,b.x);right=Math.max(right,b.x);top=Math.min(top,b.y);bottom=Math.max(bottom,b.y)}
+    const stride=right-left+3, rows=bottom-top+3;
+    const patch=new Uint8Array(stride*rows);
+    for(let y=top;y<=bottom;y++)for(let x=left;x<=right;x++)
+      if(labels[y*width+x]===group) patch[(y-top+1)*stride+x-left+1]=1;
+    const rest=Engine.analyze(patch,stride,rows,{minArea:opt.minArea,edge:false,complete:false});
+    state.skipped+=rest.skipped;
+    const ids=new Map();
+    for(const p of rest.results){
+      ids.set(p.component,++component);p.component=component;p.pass=3;
+      p.x+=left-1;p.y+=top-1;
+      for(const b of p.boundary){b.x+=left-1;b.y+=top-1}
+      p.included=p.solidity>=.94;
+      p.kind=p.included?'分离轮廓（估计）':'分离残余 / 待复核';
+      p.circularity=null;
+      remaining.push(p);
+    }
+    for(let y=top;y<=bottom;y++)for(let x=left;x<=right;x++)
+      if(labels[y*width+x]===group) labels[y*width+x]=ids.get(rest.labels[(y-top+1)*stride+x-left+1])||0;
+  }
+  state.results=results.filter(p=>p.r || !cuts.has(p.component)).concat(remaining,children);
+  state.results.sort((a,b)=>b.area-a.area).forEach((p,i)=>p.id=i+1);
+  state.components=component;
+  state.thirdPassCount=children.length;
+  return state;
+}
+const manualParticles = [];
+let manualMode = false, manualDrag;
+const manualRing = document.createElement('div');
+manualRing.style.cssText = 'position:fixed;border:2px solid #27dfc2;border-radius:50%;pointer-events:none;z-index:10';
+manualRing.hidden = true;
+document.body.append(manualRing);
+
+function storeManualParticle(shape) {
+  const id = analysis.results.reduce((max,p) => Math.max(max,p.id), 0) + 1;
+  const p = {id,circularity:null,included:true,manual:true,...shape};
+  manualParticles.push(p);
+  analysis.results.push(p);
+  selectedId = id;
+  $('undoParticle').disabled = false;
+  renderTable(true);
+  status('已补录颗粒 ' + id + '。可继续补录，按 Esc 结束。');
+}
+
+function stopManualMode() {
+  manualMode = false;
+  manualDrag = undefined;
+  manualRing.hidden = true;
+  $('addParticle').setAttribute('aria-pressed', 'false');
+  canvas.style.cursor = 'default';
+}
+$('addParticle').onclick = () => {
+  if (manualMode) {
+    stopManualMode();
+    view = 'overlay';
+    setTabs();
+    draw();
+    status('已退出补录。');
+    return;
+  }
+  if (!analysis || dirty || !scale()) {
+    status('请先完成识别和尺寸标定，再补录漏检颗粒。');
+    return;
+  }
+  calibrating = false;
+  manualMode = true;
+  $('addParticle').setAttribute('aria-pressed', 'true');
+  canvas.style.cursor = 'crosshair';
+  if (!compareMode) view = 'original';
+  setTabs();
+  draw();
+  status('从颗粒中心拖到边缘，松开即纳入。可连续补录，按 Esc 结束。');
+};
+$('undoParticle').onclick = () => {
+  const p = manualParticles.pop();
+  if (!p) return;
+  if (analysis) analysis.results = analysis.results.filter(row => row !== p);
+  if (selectedId === p.id) selectedId = null;
+  $('undoParticle').disabled = !manualParticles.length;
+  renderTable(true);
+  status('已撤销上一颗补录。');
+};
+
+function drawManualOutlines(target) {
+  if (!analysis) return;
+  target.save();
+  target.strokeStyle = target.fillStyle = '#27dfc2';
+  target.lineWidth = Math.max(1, w / 850);
+  for (const p of manualParticles) {
+    target.globalAlpha = p.included ? 1 : .35;
+    target.beginPath();
+    target.arc(p.x,p.y,p.r,0,2*Math.PI);
+    target.stroke();
+  }
+  target.restore();
+}
+for (const target of [canvas, originalCanvas]) {
+  target.addEventListener('pointerdown', event => {
+    if (!manualMode || event.button !== 0 || manualDrag || !analysis || dirty) return;
+    const center = pointOn(event, target);
+    if (center.x < 0 || center.x >= w || center.y < 0 || center.y >= h) return;
+    target.setPointerCapture(event.pointerId);
+    manualDrag = {id: event.pointerId, target, center};
+  });
+  target.addEventListener('pointermove', event => {
+    if (manualDrag?.id !== event.pointerId || manualDrag.target !== target) return;
+    const {x, y} = manualDrag.center;
+    const box = target.getBoundingClientRect();
+    const left = box.left + x * box.width / w;
+    const top = box.top + y * box.height / fullH;
+    const radius = Math.hypot(event.clientX - left, event.clientY - top);
+    Object.assign(manualRing.style, {
+      left: left - radius + 'px', top: top - radius + 'px',
+      width: 2 * radius + 'px', height: 2 * radius + 'px',
+    });
+    manualRing.hidden = false;
+  });
+  target.addEventListener('pointerup', event => {
+    if (event.button !== 0 || manualDrag?.id !== event.pointerId || manualDrag.target !== target) return;
+    const {x, y} = manualDrag.center;
+    const end = pointOn(event, target);
+    const r = Math.hypot(x - end.x, y - end.y);
+    manualDrag = undefined;
+    manualRing.hidden = true;
+    if (r < 1 || x-r < 0 || x+r > w || y-r < 0 || y+r > h) {
+      status('请在有效图像内从圆心拖到边缘，半径至少 1 px。');
+      return;
+    }
+    storeManualParticle({x,y,r,area:Math.PI*r*r,perimeter:2*Math.PI*r,kind:'手动画圆（估计）'});
+  });
+  target.addEventListener('lostpointercapture', event => {
+    if (manualDrag?.id !== event.pointerId || manualDrag.target !== target) return;
+    manualDrag = undefined;
+    manualRing.hidden = true;
+  });
+}
+window.addEventListener('keydown', event => {
+  if (manualMode && event.key === 'Escape') $('addParticle').click();
+});
+canvas.onpointerdown=e=>{if(e.button!==0||manualMode)return;if(calibrating){lineStart=point(e);lineEnd=lineStart;canvas.setPointerCapture(e.pointerId)}else if(analysis&&(view==='overlay'||isGradientPreview()))pickParticle(e,canvas)};
+originalCanvas.onpointerdown=e=>{if(e.button===0&&!manualMode&&!calibrating&&analysis)pickParticle(e,originalCanvas)};
+canvas.onpointermove=e=>{if(calibrating&&lineStart&&((e.buttons&1)||e.pointerType==='touch')){lineEnd=point(e);draw()}};
+canvas.onpointerup=e=>{if(e.button===0&&calibrating&&lineStart){lineEnd=point(e);let length=Math.hypot(lineEnd.x-lineStart.x,lineEnd.y-lineStart.y);if(length>0){$('pixels').value=length.toFixed(3);scaleLabel()}calibrating=false;canvas.style.cursor='default';draw();status(`标尺长度：${length.toFixed(2)} px。请确认对应的实际长度和单位。`)}};
+let importSequence=0;
+$('file').onchange=async e=>{let f=e.target.files[0];if(!f)return;const sequence=++importSequence;status('正在读取 '+f.name+'…');try{let buffer=await f.arrayBuffer();if(sequence!==importSequence)return;let savedName=f.name;if(window.SEM_LOCAL_SERVER){try{const resp=await fetch('/api/import/'+encodeURIComponent(f.name),{method:'POST',headers:{'Content-Type':'application/octet-stream'},body:buffer});if(!resp.ok)throw Error(await resp.text());savedName=(await resp.json()).name;await refreshInputs(savedName)}catch(err){status('原图已载入，但未能复制到 input：'+err.message)}}let head=new Uint8Array(buffer,0,Math.min(4,buffer.byteLength)),isTiff=/\.tiff?$/i.test(f.name)||(head[0]===73&&head[1]===73)||(head[0]===77&&head[1]===77);if(isTiff){const decoded=await TiffReader.decode(buffer);if(sequence!==importSequence)return;let c=document.createElement('canvas');c.width=decoded.width;c.height=decoded.height;c.getContext('2d').putImageData(new ImageData(decoded.rgba,c.width,c.height),0,0);load(c,savedName,decoded);status($('status').textContent+` TIFF：${c.width} × ${c.height} px，${decoded.bits} 位。${decoded.normalized?'灰度映射至 8 位用于阈值处理，像素尺寸保持不变。':''}${decoded.multiplePages?'多页文件：当前读取第 1 页。':''}`)}else{let url=URL.createObjectURL(new Blob([buffer],{type:f.type}));try{let img=new Image();await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=()=>reject(Error('无法读取图片，请使用 TIFF、PNG、JPG、WebP 或 BMP'));img.src=url});if(sequence===importSequence)load(img,savedName)}finally{URL.revokeObjectURL(url)}}}catch(err){if(sequence===importSequence)status('导入失败：'+err.message)}finally{e.target.value=''}};
+
+
+/* Particle population statistics: area weights = d^2; spherical-volume proxy = d^3. */
+function weightedQuantile(sorted,power,q){
+ if(!sorted.length)return NaN;
+ const max=sorted[sorted.length-1];if(!(max>0))return NaN;
+ let weights=sorted.map(d=>(d/max)**power),total=weights.reduce((a,b)=>a+b,0);
+ if(!(total>0))return NaN;
+ let threshold=total*Math.max(0,Math.min(1,q)),sum=0;
+ for(let i=0;i<sorted.length;i++){sum+=weights[i];if(sum>=threshold-1e-13*total)return sorted[i]}
+ return sorted[sorted.length-1];
+}
+function particleSummary(particles=analysis?.results.filter(p=>p.included)||[],s=scale()){
+ const diameters=particles.map(p=>2*Math.sqrt(p.area/Math.PI)*s).filter(d=>d>0&&Number.isFinite(d)).sort((a,b)=>a-b);
+ const n=diameters.length,empty={n:0,diameters:[],number:[],area:[],volume:[],mean:NaN,stdev:NaN,cv:NaN,geom:NaN,gsd:NaN,min:NaN,max:NaN,spanNumber:NaN,spanArea:NaN,spanVolume:NaN};
+ if(!n)return empty;
+ const number=[.1,.5,.9].map(q=>quantile(diameters,q)),area=[.1,.5,.9].map(q=>weightedQuantile(diameters,2,q)),volume=[.1,.5,.9].map(q=>weightedQuantile(diameters,3,q));
+ // Online variance avoids cancellation for tightly clustered particle sizes.
+ let mean=0,m2=0;for(let i=0;i<n;i++){let delta=diameters[i]-mean;mean+=delta/(i+1);m2+=delta*(diameters[i]-mean)}
+ let stdev=Math.sqrt(Math.max(0,m2/n));
+ let logMean=0;for(const d of diameters)logMean+=Math.log(d)/n;
+ let logVar=0;for(const d of diameters)logVar+=(Math.log(d)-logMean)**2/n;
+ const span=q=>q[1]>0?(q[2]-q[0])/q[1]:NaN;
+ return{n,diameters,number,area,volume,mean,stdev,cv:mean>0?100*stdev/mean:NaN,geom:Math.exp(logMean),gsd:Math.exp(Math.sqrt(logVar)),min:diameters[0],max:diameters[n-1],spanNumber:span(number),spanArea:span(area),spanVolume:span(volume)};
+}
+function renderStats(stat=particleSummary()){
+ const body=$('statsBody'),extra=$('statExtras'),unit=$('unit').value;
+ $('downloadStats').disabled=!stat.n;
+ if(!stat.n){body.innerHTML='<tr><td colspan="5">暂无纳入统计的有效颗粒</td></tr>';extra.innerHTML='';$('statWarning').textContent='* Dv 基于二维等效粒径假设球形，按 d³ 加权估算；不是三维直接测得的体积分数。';return}
+ let rows=[['数量 Dn',stat.number,stat.spanNumber],['投影面积 Da',stat.area,stat.spanArea],['球形假设体积 Dv*',stat.volume,stat.spanVolume]];
+ body.innerHTML=rows.map(([name,q,span])=>`<tr><td>${name}</td>${q.map(v=>`<td>${niceNumber(v)}</td>`).join('')}<td>${niceNumber(span)}</td></tr>`).join('');
+ let pair=(label,val)=>`<div><span>${label}</span><strong>${val}</strong></div>`;
+ extra.innerHTML=pair('平均粒径',niceNumber(stat.mean)+' '+unit)+pair('标准差 σ',niceNumber(stat.stdev)+' '+unit)+pair('变异系数 CV',niceNumber(stat.cv)+'%')+pair('几何平均粒径',niceNumber(stat.geom)+' '+unit)+pair('几何标准差 GSD',niceNumber(stat.gsd))+pair('最小 / 最大粒径',niceNumber(stat.min)+' / '+niceNumber(stat.max)+' '+unit);
+ let parts=['* Dv 按等效粒径 d³ 加权，假定颗粒近似球形，只表示被纳入颗粒间的相对体积份额，不是对样品总体体积分数的直接测量。'];
+ if(stat.n<30)parts.push('样本量少于 30 颗，分位数受个别大颗粒影响较明显。');
+ const estimated=analysis.results.filter(p=>p.included&&(p.r||p.pass===3||p.kind==='分离轮廓（估计）')).length;
+ if(estimated)parts.push(`${estimated} 颗含拟合或分离估计轮廓，其粒径的不确定性会放大 d³ 加权误差。`);
+ $('statWarning').textContent=parts.join(' ');
+}
+function binsOfWeighted(values,n,power,start,end){
+ const bins=binsOf(values,n,start,end),max=values.length?values[values.length-1]:0;
+ bins.counts.fill(0);let total=0;
+ if(!(max>0))return bins;
+ const step=(bins.end-bins.start)/n;
+ for(const d of values){let weight=(d/max)**power,i=Math.max(0,Math.min(n-1,Math.floor((d-bins.start)/step)));bins.counts[i]+=weight;total+=weight}
+ if(total>0)bins.counts=bins.counts.map(v=>100*v/total);
+ return bins;
+}
+function csvBody(lines){return '\ufeff'+lines.map(row=>row.map(v=>'"'+String(v??'').replaceAll('"','""')+'"').join(',')).join('\r\n')}
+$('downloadStats').onclick=()=>{
+ if(!analysis||dirty||!scale())return;
+ const st=particleSummary(),unit=$('unit').value,bins=Math.max(5,Math.min(50,Math.round(Number($('chartBins').value)||14)));
+ const rows=[['SEM 粒径分布统计（仅当前纳入颗粒）'],['图像',$('filename').textContent],['长度单位',unit],['样本数',st.n],['统计定义','Dn 数量加权；Da 按 d² 加权；Dv 按 d³ 加权（假设球形，相对体积份额）'],['注意','Dv 不是样品总体的实测三维体积分数；球形补全和分离轮廓存在估计误差'],[],['分布口径','D10 ('+unit+')','D50 ('+unit+')','D90 ('+unit+')','Span']];
+ for(const [name,qs,span] of [['数量 Dn',st.number,st.spanNumber],['面积 Da',st.area,st.spanArea],['体积 Dv（估算）',st.volume,st.spanVolume]])rows.push([name,...qs,span]);
+ rows.push([],['统计项','值','单位'],['平均粒径',st.mean,unit],['标准差',st.stdev,unit],['变异系数',st.cv,'%'],['几何平均粒径',st.geom,unit],['几何标准差',st.gsd,'无量纲'],['最小粒径',st.min,unit],['最大粒径',st.max,unit]);
+ if(st.n){let cb=binsOf(st.diameters,bins),ab=binsOfWeighted(st.diameters,bins,2,cb.start,cb.end),vb=binsOfWeighted(st.diameters,bins,3,cb.start,cb.end),total=st.n;
+ rows.push([],['分箱下限 ('+unit+')','分箱上限 ('+unit+')','数量','数量占比 (%)','投影面积占比 (%)','相对球形体积占比 (%)','数量累计 (%)','面积累计 (%)','体积累计 (%)']);
+ let nc=0,ac=0,vc=0;for(let i=0;i<bins;i++){nc+=cb.counts[i]/total*100;ac+=ab.counts[i];vc+=vb.counts[i];rows.push([cb.edges[i],cb.edges[i+1],cb.counts[i],cb.counts[i]/total*100,ab.counts[i],vb.counts[i],nc,ac,vc])}}
+ save(new Blob([csvBody(rows)],{type:'text/csv;charset=utf-8'}),'SEM-粒径分布统计.csv');
+};
+
+/* Count-weighted distributions computed from the currently included particles. */
+function emptyCharts(message){$('chartGrid').innerHTML=`<div class="graph-empty">${message}</div>`;$('downloadCharts').disabled=true;$('referenceFigure').innerHTML=`<div class="graph-empty">${message}</div>`;$('referencePng').disabled=true;$('referenceSvg').disabled=true}
+function validCircle(p,includeFit){return p.included&&p.circularity!==null&&Number.isFinite(p.circularity)&&(includeFit||!p.r)}
+function quantile(sorted,q){if(!sorted.length)return NaN;let index=(sorted.length-1)*q,lo=Math.floor(index),f=index-lo;return sorted[lo]+(sorted[Math.min(sorted.length-1,lo+1)]-sorted[lo])*f}
+function niceNumber(x){if(!Number.isFinite(x))return '—';if(Math.abs(x)>=1e5||(Math.abs(x)<.001&&x!==0))return x.toExponential(2);return Number(x.toPrecision(4)).toString()}
+function binsOf(values,n,start,end){let a=Number.isFinite(start)?start:Infinity,b=Number.isFinite(end)?end:-Infinity;if(!Number.isFinite(start)||!Number.isFinite(end))for(const v of values){if(!Number.isFinite(start)&&v<a)a=v;if(!Number.isFinite(end)&&v>b)b=v}if(a===b){let d=Math.max(.00001,Math.abs(a)*.1);a-=d;b+=d}let counts=new Array(n).fill(0),step=(b-a)/n;for(const v of values){let i=Math.max(0,Math.min(n-1,Math.floor((v-a)/step)));counts[i]++}return{start:a,end:b,counts,centers:counts.map((_,i)=>a+step*(i+.5)),edges:counts.map((_,i)=>a+step*i).concat(b)}}
+function cumulativeFromBins(bins){let sum=0,total=bins.counts.reduce((a,b)=>a+b,0);return bins.edges.map((x,i)=>({x,y:i===0?0:(sum+=bins.counts[i-1],100*sum/total)}))}
+function xmlSafe(value){return String(value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;')}
+function lineChart({title,xLabel,yLabel,points,xMin,xMax,yMin=0,yMax,bars,scatter,percentile=false,multiLines,markers}){
+ const W=620,H=300,L=64,R=20,T=25,B=55,PW=W-L-R,PH=H-T-B,rx=xMax-xMin||1,ry=yMax-yMin||1;
+ const px=x=>L+(x-xMin)/rx*PW,py=y=>T+PH-(y-yMin)/ry*PH;
+ let shapes=[`<rect width="${W}" height="${H}" fill="#fcfdfc"/>`];
+ for(let i=0;i<=4;i++){let y=T+PH*i/4,val=yMax-ry*i/4;shapes.push(`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="#e6ede7" stroke-width="1"/>`);shapes.push(`<text x="${L-8}" y="${y+4}" text-anchor="end" font-size="12" fill="#75877d">${xmlSafe(percentile?Math.round(val)+'%':niceNumber(val))}</text>`)}
+ for(let i=0;i<=5;i++){let x=L+PW*i/5,val=xMin+rx*i/5;shapes.push(`<line x1="${x}" x2="${x}" y1="${T+PH}" y2="${T+PH+5}" stroke="#aab9ae"/>`);shapes.push(`<text x="${x}" y="${T+PH+21}" text-anchor="middle" font-size="12" fill="#75877d">${xmlSafe(niceNumber(val))}</text>`)}
+ shapes.push(`<line x1="${L}" x2="${L}" y1="${T}" y2="${T+PH}" stroke="#9aafa1"/><line x1="${L}" x2="${W-R}" y1="${T+PH}" y2="${T+PH}" stroke="#9aafa1"/>`);
+ if(bars){let step=PW/bars.counts.length;for(let i=0;i<bars.counts.length;i++){let x=L+i*step+step*.1,y=py(bars.counts[i]);shapes.push(`<rect x="${x}" y="${y}" width="${step*.8}" height="${Math.max(0,T+PH-y)}" fill="#86bba4" opacity=".5"/>`)}}
+ if(points&&points.length){let path=points.map((p,i)=>`${i?'L':'M'}${px(p.x).toFixed(2)} ${py(p.y).toFixed(2)}`).join(' ');shapes.push(`<path d="${path}" fill="none" stroke="#176d59" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.7"/>`);if(points.length<=22)for(const p of points)shapes.push(`<circle cx="${px(p.x)}" cy="${py(p.y)}" r="3" fill="#176d59"/>`)}
+ if(multiLines){const colors=['#176d59','#c67c38','#735bb0'];multiLines.forEach((line,i)=>{const path=line.points.map((p,j)=>`${j?'L':'M'}${px(p.x).toFixed(2)} ${py(p.y).toFixed(2)}`).join(' ');shapes.push(`<path d="${path}" fill="none" stroke="${colors[i%colors.length]}" stroke-width="2.7" stroke-linejoin="round"/>`);shapes.push(`<line x1="${L+i*146}" x2="${L+i*146+18}" y1="13" y2="13" stroke="${colors[i%colors.length]}" stroke-width="3"/><text x="${L+i*146+24}" y="17" font-size="12" fill="#3d594b">${xmlSafe(line.label)}</text>`)})}
+ if(markers)for(const m of markers){if(!Number.isFinite(m.x)||m.x<xMin||m.x>xMax)continue;const x=px(m.x);shapes.push(`<line x1="${x}" y1="${T}" x2="${x}" y2="${T+PH}" stroke="#be5b48" stroke-width="1.4" stroke-dasharray="5 4"/><text x="${Math.max(L+28,Math.min(W-R-26,x))}" y="${T+13}" text-anchor="middle" font-size="11" fill="#a64735">${xmlSafe(m.label)}</text>`)}
+ if(scatter)for(const p of scatter)shapes.push(`<circle cx="${px(p.x).toFixed(2)}" cy="${py(p.y).toFixed(2)}" r="2.8" fill="#1c8a78" fill-opacity=".47"/>`);
+ shapes.push(`<text x="${L+PW/2}" y="${H-8}" text-anchor="middle" font-size="13" fill="#526b5e">${xmlSafe(xLabel)}</text>`);
+ shapes.push(`<text x="16" y="${T+PH/2}" text-anchor="middle" transform="rotate(-90 16 ${T+PH/2})" font-size="12" fill="#526b5e">${xmlSafe(yLabel)}</text>`);
+ return `<svg xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${xmlSafe(title)}" viewBox="0 0 ${W} ${H}">${shapes.join('')}</svg>`;
+}
+function chartCard(title,subtitle,svg){return `<div class="graph-card"><div class="graph-card-head"><h3>${xmlSafe(title)}</h3><small>${xmlSafe(subtitle)}</small></div>${svg}</div>`}
+/* Publication-style dual-axis plot. Blue = number percentage per bin;
+   violet = relative sphere-volume percentage per bin (each d^3). Both share
+   the SAME bin edges. Curves visualize trends only and never alter Dn/Dv. */
+function referenceAxisMax(peak){
+ let target=Math.max(0.5,peak*1.11),steps=[.1,.2,.25,.5,1,2,2.5,5,10,20,25,50,100,200,250,500,1000,2000];
+ let best=null;
+ for(const step of steps){let ticks=Math.ceil(target/step),max=ticks*step;if(ticks>=5&&ticks<=9){best={max,step,ticks};break}}
+ if(best)return best;
+ let step=10**Math.floor(Math.log10(target/7));let norm=(target/7)/step;
+ step*=norm<=1?1:norm<=2?2:norm<=5?5:10;
+ let ticks=Math.ceil(target/step);return{max:ticks*step,step,ticks};
+}
+function referenceNiceTick(maxD){
+ if(maxD<=2.4)return .2;if(maxD<=6)return .5;
+ if(maxD<=20)return 1;if(maxD<=40)return 2;if(maxD<=100)return 5;
+ const base=10**Math.floor(Math.log10(maxD/14)),scaled=maxD/14/base;
+ return base*(scaled<=1?1:scaled<=2?2:scaled<=5?5:10);
+}
+function referenceDistribution(values,n,xmax){
+ let number=new Array(n).fill(0),volume=new Array(n).fill(0),maxD=values.at(-1),wTotal=0,step=xmax/n;
+ for(const d of values){let i=Math.min(n-1,Math.max(0,Math.floor(d/step))),v=(d/maxD)**3;number[i]++;volume[i]+=v;wTotal+=v}
+ return{number:number.map(v=>100*v/values.length),volume:volume.map(v=>wTotal?100*v/wTotal:0),step};
+}
+function referenceTrend(values,power,mode,step,xmax){
+ const maxD=values.at(-1),weights=values.map(d=>(d/maxD)**power),total=weights.reduce((a,b)=>a+b,0);
+ const mu=values.reduce((a,d,i)=>a+d*weights[i],0)/total;
+ const variance=values.reduce((a,d,i)=>a+(d-mu)**2*weights[i],0)/total;
+ const sd=Math.sqrt(Math.max(variance,(step*1.45)**2));
+ const nEff=total**2/weights.reduce((a,w)=>a+w*w,0);
+ let raw=[];
+ const count=320,dx=xmax/count;
+ if(mode==='gaussian'){
+   for(let j=0;j<=count;j++){const z=(j*dx-mu)/sd;raw.push(Math.exp(-.5*z*z)/sd)}
+ }else{
+   const bandwidth=Math.max(step*1.35,1.06*sd*Math.pow(Math.max(2,nEff),-.2));
+   // Use binned density to cap quadratic cost for very large SEM images.
+   const nHist=Math.max(80,Math.min(350,Math.ceil(xmax/(step*.45)))),hist=new Float64Array(nHist);
+   for(let i=0;i<values.length;i++){const ix=Math.min(nHist-1,Math.floor(values[i]/xmax*nHist));hist[ix]+=weights[i]/total}
+   const hStep=xmax/nHist;
+   for(let j=0;j<=count;j++){
+     const x=j*dx;let density=0;
+     for(let k=0;k<nHist;k++){if(!hist[k])continue;const z=(x-(k+.5)*hStep)/bandwidth;if(Math.abs(z)>6)continue;density+=hist[k]*Math.exp(-.5*z*z)/bandwidth}
+     raw.push(density);
+   }
+ }
+ // Renormalize over visible x range: the curve represents % per actual bin.
+ let integral=0;for(let j=1;j<raw.length;j++)integral+=(raw[j-1]+raw[j])*dx*.5;
+ return raw.map((v,j)=>({x:j*dx,y:integral>0?100*step*v/integral:0}));
+}
+function buildReferenceSVG(values,unit,bins,mode){
+ const W=1400,H=1075,L=155,R=1248,T=27,B=915,PW=R-L,PH=B-T;
+ const tick=referenceNiceTick(values.at(-1)),xmax=Math.max(tick,Math.ceil(values.at(-1)/tick-1e-10)*tick);
+ const data=referenceDistribution(values,bins,xmax),numCurve=referenceTrend(values,0,mode,data.step,xmax),volCurve=referenceTrend(values,3,mode,data.step,xmax);
+ const leftAxis=referenceAxisMax(Math.max(...data.number,...numCurve.map(p=>p.y))),rightAxis=referenceAxisMax(Math.max(...data.volume,...volCurve.map(p=>p.y)));
+ const xx=x=>L+x/xmax*PW,yl=y=>B-y/leftAxis.max*PH,yr=y=>B-y/rightAxis.max*PH;
+ const blue='#079ffa',blueCurve='#090bff',pink='#eba8f8',pinkCurve='#f000f5';
+ let svg=[`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="Particle diameter distribution: number frequency and relative spherical volume fraction">`,
+ `<title>粒径数量频率与相对球形体积分数的双纵轴分布图</title>`,
+ `<desc>蓝色柱形为数量频率百分比，粉紫色柱形为球形假设体积分数百分比，高斯曲线或核密度曲线为趋势拟合。</desc>`,
+ `<rect width="${W}" height="${H}" fill="#ffffff"/>`,
+ `<defs><clipPath id="ref-plot-clip"><rect x="${L}" y="${T}" width="${PW}" height="${PH}"/></clipPath></defs>`,
+ `<g clip-path="url(#ref-plot-clip)">`];
+ const bw=PW/bins;
+ for(let i=0;i<bins;i++){
+   const bx=L+i*bw;
+   // Narrow, side-by-side bars, with a fine black border as in the reference.
+   const barW=Math.max(1,bw*.36);
+   if(data.number[i]>0)svg.push(`<rect x="${(bx+bw*.085).toFixed(3)}" y="${yl(data.number[i]).toFixed(3)}" width="${barW.toFixed(3)}" height="${Math.max(0,B-yl(data.number[i])).toFixed(3)}" fill="${blue}" stroke="#080808" stroke-width="1.0"/>`);
+   if(data.volume[i]>0)svg.push(`<rect x="${(bx+bw*.555).toFixed(3)}" y="${yr(data.volume[i]).toFixed(3)}" width="${barW.toFixed(3)}" height="${Math.max(0,B-yr(data.volume[i])).toFixed(3)}" fill="${pink}" stroke="#080808" stroke-width="1.0"/>`);
+ }
+ const makePath=(pts,py)=>pts.map((p,i)=>`${i?'L':'M'}${xx(p.x).toFixed(3)} ${py(p.y).toFixed(3)}`).join(' ');
+ svg.push(`<path d="${makePath(numCurve,yl)}" fill="none" stroke="${blueCurve}" stroke-width="2.4" stroke-linecap="round"/>`,
+   `<path d="${makePath(volCurve,yr)}" fill="none" stroke="${pinkCurve}" stroke-width="2.4" stroke-linecap="round"/>`,`</g>`);
+ // Heavy black top and bottom; colored left/right vertical axes.
+ svg.push(`<path d="M ${L} ${T} H ${R}" stroke="#080808" stroke-width="6" fill="none"/>`,
+ `<path d="M ${L} ${B} H ${R}" stroke="#080808" stroke-width="6" fill="none"/>`,
+ `<path d="M ${L} ${T} V ${B}" stroke="${blue}" stroke-width="6" fill="none"/>`,
+ `<path d="M ${R} ${T} V ${B}" stroke="${pink}" stroke-width="6" fill="none"/>`);
+ for(let i=0;i<=leftAxis.ticks;i++){
+   const v=i*leftAxis.step,y=yl(v);
+   svg.push(`<line x1="${L}" y1="${y}" x2="${L+17}" y2="${y}" stroke="${blue}" stroke-width="5.5"/>`,
+   `<text x="${L-19}" y="${y+13}" text-anchor="end" font-family="Arial,Helvetica,sans-serif" font-size="45" fill="${blue}">${niceNumber(v)}</text>`);
+   if(i<leftAxis.ticks){let half=y-leftAxis.step/2/leftAxis.max*PH;svg.push(`<line x1="${L}" y1="${half}" x2="${L+9}" y2="${half}" stroke="${blue}" stroke-width="5"/>`)}
+ }
+ for(let i=0;i<=rightAxis.ticks;i++){
+   const v=i*rightAxis.step,y=yr(v);
+   svg.push(`<line x1="${R-17}" y1="${y}" x2="${R}" y2="${y}" stroke="${pink}" stroke-width="5.5"/>`,
+   `<text x="${R+20}" y="${y+13}" text-anchor="start" font-family="Arial,Helvetica,sans-serif" font-size="45" fill="${pink}">${niceNumber(v)}</text>`)
+ }
+ // Dynamic readable x tick spacing, integer micrometre ticks where appropriate.
+ let xStep=tick;if(xmax/xStep>22)xStep*=Math.ceil(xmax/xStep/22);
+ for(let v=0;v<=xmax+xStep*.001;v+=xStep){const x=xx(v);
+   svg.push(`<line x1="${x}" x2="${x}" y1="${B-3}" y2="${B+9}" stroke="#080808" stroke-width="4"/>`,
+   `<text x="${x}" y="${B+66}" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="45" fill="#000">${niceNumber(v)}</text>`)
+ }
+ svg.push(`<text x="${(L+R)/2}" y="1052" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="51" fill="#000">Particle diameter, D / ${xmlSafe(unit)}</text>`,
+ `<text transform="translate(55 ${(T+B)/2}) rotate(-90)" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="50" fill="${blue}">Frequency (%)</text>`,
+ `<text transform="translate(1365 ${(T+B)/2}) rotate(-90)" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="50" fill="${pink}">Volume fraction (%)</text>`,
+ `</svg>`);
+ return svg.join('');
+}
+function renderReferenceChart(stat=particleSummary()){
+ const root=$('referenceFigure');
+ if(!analysis||dirty||!scale()||!stat.n){root.innerHTML='<div class="graph-empty">识别并纳入颗粒后生成图表</div>';$('referencePng').disabled=true;$('referenceSvg').disabled=true;return}
+ const bins=Math.max(8,Math.min(100,Math.round(Number($('referenceBins').value)||34)));
+ root.innerHTML=buildReferenceSVG(stat.diameters,$('unit').value,bins,$('referenceCurve').value);
+ $('referencePng').disabled=false;$('referenceSvg').disabled=false;
+ $('referenceInfo').textContent=`当前纳入 ${stat.n} 颗；分箱 ${bins} 组；Dn50 = ${niceNumber(stat.number[1])}、Dv50* = ${niceNumber(stat.volume[1])} ${$('unit').value}。蓝色为数量频率，粉紫色为球形假设相对体积份额（d³）。柱形为实际分箱比例，曲线仅作趋势展示；* 不是直接测量的三维体积分数。`;
+}
+$('referenceBins').onchange=()=>{let el=$('referenceBins');el.value=Math.max(8,Math.min(100,Math.round(Number(el.value)||34)));renderReferenceChart()};
+$('referenceCurve').onchange=()=>renderReferenceChart();
+$('referenceSvg').onclick=()=>{
+ const svg=$('referenceFigure').querySelector('svg');if(!svg)return;
+ const xml=new XMLSerializer().serializeToString(svg);
+ save(new Blob([xml],{type:'image/svg+xml;charset=utf-8'}),'SEM-粒径数量体积分布-双纵轴.svg');
+};
+$('referencePng').onclick=async()=>{
+ const svg=$('referenceFigure').querySelector('svg');if(!svg)return;
+ const button=$('referencePng');button.disabled=true;
+ let url=null;
+ try{
+  const source=new XMLSerializer().serializeToString(svg),blob=new Blob([source],{type:'image/svg+xml;charset=utf-8'});
+  url=URL.createObjectURL(blob);
+  const image=new Image();await new Promise((resolve,reject)=>{image.onload=resolve;image.onerror=()=>reject(Error('双轴图 SVG 无法转换为 PNG'));image.src=url});
+  const factor=3,c=document.createElement('canvas');c.width=1400*factor;c.height=1075*factor;
+  const g=c.getContext('2d');if(!g)throw Error('浏览器无法创建图像画布');g.fillStyle='#fff';g.fillRect(0,0,c.width,c.height);g.drawImage(image,0,0,c.width,c.height);
+  const png=await new Promise(resolve=>c.toBlob(resolve,'image/png'));if(!png)throw Error('PNG 编码失败');
+  save(png,'SEM-粒径数量体积分布-双纵轴-4200px.png');
+ }catch(e){status('单独导出双轴图失败：'+e.message)}finally{if(url)URL.revokeObjectURL(url);button.disabled=false}
+};
+function renderCharts(stat){
+ if(!analysis||dirty){emptyCharts('完成颗粒识别后自动绘图');$('chartInfo').textContent='识别后自动绘制，随纳入勾选、圆度过滤及标定同步更新。';return}
+ const s=scale();if(!s){emptyCharts('需要有效的像素与实际长度标定');$('chartInfo').textContent='请先填写有效标定值。';return}
+ stat??=particleSummary();
+ const unit=$('unit').value,size=stat.diameters;
+ const includeFit=$('chartIncludeFit').checked,circleParticles=analysis.results.filter(p=>validCircle(p,includeFit)),circles=circleParticles.map(p=>p.circularity).sort((a,b)=>a-b);
+ const bins=Math.max(5,Math.min(50,Math.round(Number($('chartBins').value)||14)));
+ $('chartInfo').textContent=`纳入 ${stat.n} 颗；Dn50=${niceNumber(stat.number[1])}、估算 Dv50=${niceNumber(stat.volume[1])} ${unit}；有效二维圆度 n=${circles.length}${includeFit?'（含拟合估计）':'（不含拟合与未知）'}。体积加权基于球形假设 d³，不代表实测样品总体体积分数。`;
+ if(!size.length){emptyCharts('当前没有纳入统计的颗粒');return}
+ let charts=[];
+ const sizeB=binsOf(size,bins),sizePts=sizeB.centers.map((x,i)=>({x,y:sizeB.counts[i]}));
+ charts.push(chartCard('01 · 粒径频数分布','柱形 + 频数折线 · n='+size.length,lineChart({title:'粒径频数分布',xLabel:'等效粒径 ('+unit+')',yLabel:'颗粒数',points:sizePts,bars:sizeB,xMin:sizeB.start,xMax:sizeB.end,yMax:Math.max(1,Math.ceil(Math.max(...sizeB.counts)*1.12))})));
+ charts.push(chartCard('02 · 粒径累计频率','累计数量百分比 · D10 / D50 / D90',lineChart({title:'粒径累计分布',xLabel:'等效粒径 ('+unit+')',yLabel:'累计频率 (%)',points:cumulativeFromBins(sizeB),xMin:sizeB.start,xMax:sizeB.end,yMax:100,percentile:true})));
+ const sizeQuantiles=Array.from({length:21},(_,i)=>({x:i*5,y:quantile(size,i/20)})),qMax=Math.max(...sizeQuantiles.map(p=>p.y));
+ charts.push(chartCard('03 · 粒径分位值曲线',`D10 ${niceNumber(quantile(size,.1))} / D50 ${niceNumber(quantile(size,.5))} / D90 ${niceNumber(quantile(size,.9))} ${unit}`,lineChart({title:'粒径分位值曲线',xLabel:'数量百分位 (%)',yLabel:'粒径 ('+unit+')',points:sizeQuantiles,xMin:0,xMax:100,yMin:0,yMax:qMax>0?qMax*1.08:1})));
+ if(circles.length){let circEnd=Math.max(1,Math.ceil(Math.max(...circles)*10)/10),circStart=Math.min(0,Math.floor(Math.min(...circles)*10)/10);if(circStart===circEnd)circEnd=circStart+1;let cB=binsOf(circles,Math.max(10,Math.min(40,bins+4)),circStart,circEnd),cPts=cB.centers.map((x,i)=>({x,y:cB.counts[i]}));
+ charts.push(chartCard('04 · 圆度频数分布','仅有数值的二维圆度 · n='+circles.length,lineChart({title:'二维圆度频数分布',xLabel:'圆度 4πA / P²',yLabel:'颗粒数',points:cPts,bars:cB,xMin:cB.start,xMax:cB.end,yMax:Math.max(1,Math.ceil(Math.max(...cB.counts)*1.12))})));
+ charts.push(chartCard('05 · 圆度累计频率','累计数量百分比 · n='+circles.length,lineChart({title:'二维圆度累计频率',xLabel:'圆度 4πA / P²',yLabel:'累计频率 (%)',points:cumulativeFromBins(cB),xMin:cB.start,xMax:cB.end,yMax:100,percentile:true})));
+ }else{charts.push(chartCard('04 · 圆度频数分布','暂无可用圆度','<div class="graph-empty">纳入颗粒没有可绘制的有效圆度</div>'));charts.push(chartCard('05 · 圆度累计频率','暂无可用圆度','<div class="graph-empty">没有可用于累计分布的圆度</div>'))}
+ const scat=circleParticles.map(p=>({x:2*Math.sqrt(p.area/Math.PI)*s,y:p.circularity}));
+ if(scat.length){const stride=Math.max(1,Math.ceil(scat.length/900)),sample=scat.filter((_,i)=>i%stride===0),xMin=Math.min(...sample.map(p=>p.x)),xMax=Math.max(...sample.map(p=>p.x)),yMin=Math.min(0,Math.min(...sample.map(p=>p.y))),yMax=Math.max(1,Math.max(...sample.map(p=>p.y))*1.05);charts.push(chartCard('06 · 粒径—圆度关系',`散点图 · ${scat.length} 颗${stride>1?'（抽样显示）':''}`,lineChart({title:'等效粒径与二维圆度关系',xLabel:'等效粒径 ('+unit+')',yLabel:'二维圆度',scatter:sample,xMin:Math.min(0,xMin),xMax:xMax||1,yMin,yMax})))
+ }else charts.push(chartCard('06 · 粒径—圆度关系','暂无可用圆度','<div class="graph-empty">暂无散点数据</div>'));
+ // Additional weighted plots are normalized to the same included particles and bin edges.
+ const volB=binsOfWeighted(size,bins,3,sizeB.start,sizeB.end),areaB=binsOfWeighted(size,bins,2,sizeB.start,sizeB.end);
+ charts.push(chartCard('07 · 相对体积分布*','体积百分比 / 分箱 · 球形假设 d³',lineChart({title:'相对球形体积频率',xLabel:'等效粒径 ('+unit+')',yLabel:'相对体积份额 (%)',points:volB.centers.map((x,i)=>({x,y:volB.counts[i]})),bars:volB,xMin:sizeB.start,xMax:sizeB.end,yMax:Math.max(1,Math.max(...volB.counts)*1.12)})));
+ charts.push(chartCard('08 · 累计相对体积分布*',`Dv10 ${niceNumber(stat.volume[0])} / Dv50 ${niceNumber(stat.volume[1])} / Dv90 ${niceNumber(stat.volume[2])} ${unit}`,lineChart({title:'累计相对球形体积分布',xLabel:'等效粒径 ('+unit+')',yLabel:'累计体积份额 (%)',points:cumulativeFromBins(volB),xMin:sizeB.start,xMax:sizeB.end,yMax:100,percentile:true,markers:[{x:stat.volume[1],label:'Dv50'}]})));
+ charts.push(chartCard('09 · 投影面积分布','颗粒面积占比 / 分箱 · d² 加权',lineChart({title:'投影面积频率',xLabel:'等效粒径 ('+unit+')',yLabel:'相对投影面积份额 (%)',points:areaB.centers.map((x,i)=>({x,y:areaB.counts[i]})),bars:areaB,xMin:sizeB.start,xMax:sizeB.end,yMax:Math.max(1,Math.max(...areaB.counts)*1.12)})));
+ charts.push(chartCard('10 · 三种累计分布比较','数量 Dn · 投影面积 Da · 球形体积 Dv*',lineChart({title:'数量 / 面积 / 体积累计对比',xLabel:'等效粒径 ('+unit+')',yLabel:'累计比例 (%)',xMin:sizeB.start,xMax:sizeB.end,yMax:100,percentile:true,multiLines:[{label:'数量',points:cumulativeFromBins(sizeB)},{label:'投影面积',points:cumulativeFromBins(areaB)},{label:'球形体积*',points:cumulativeFromBins(volB)}]})));
+ $('chartGrid').innerHTML=charts.join('');$('downloadCharts').disabled=false;renderReferenceChart(stat);
+}
+$('chartBins').oninput=()=>{if(analysis)renderCharts()};$('chartIncludeFit').onchange=()=>{if(analysis)renderCharts()};
+$('toCharts').onclick=()=>$('graphs').scrollIntoView({behavior:'smooth',block:'start'});
+function chartsCombinedSVG(){const cards=[...$('chartGrid').querySelectorAll('.graph-card')],W=1300,C=2,colW=630,rowH=355,H=85+Math.ceil(cards.length/C)*rowH;let body=`<rect width="${W}" height="${H}" fill="#ffffff"/><text x="22" y="38" font-family="sans-serif" font-size="24" font-weight="600" fill="#244637">SEM 颗粒分布统计</text><text x="22" y="63" font-family="sans-serif" font-size="12" fill="#61786b">${xmlSafe($('chartInfo').textContent)}</text>`;cards.forEach((card,i)=>{const x=20+(i%C)*650,y=80+Math.floor(i/C)*rowH,svg=card.querySelector('svg'),title=card.querySelector('h3')?.textContent||'';body+=`<rect x="${x}" y="${y}" width="${colW}" height="${rowH-12}" rx="8" fill="#fcfdfc" stroke="#dce9df"/><text x="${x+16}" y="${y+25}" font-family="sans-serif" font-size="18" fill="#23473b">${xmlSafe(title)}</text>`;if(svg){const inner=svg.innerHTML;body+=`<svg xmlns="http://www.w3.org/2000/svg" x="${x+5}" y="${y+35}" width="620" height="300" viewBox="0 0 620 300">${inner}</svg>`}else body+=`<text x="${x+60}" y="${y+160}" font-family="sans-serif" font-size="16" fill="#8ca195">无有效数据</text>`});return{xml:`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">${body}</svg>`,width:W,height:H}}
+$('downloadCharts').onclick=async()=>{if(!analysis||$('downloadCharts').disabled)return;const button=$('downloadCharts');button.disabled=true;try{const {xml,width,height}=chartsCombinedSVG(),blob=new Blob([xml],{type:'image/svg+xml;charset=utf-8'}),url=URL.createObjectURL(blob);try{let img=new Image();await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=()=>reject(new Error('统计图绘制失败'));img.src=url});const c=document.createElement('canvas');c.width=width*2;c.height=height*2;const g=c.getContext('2d');g.scale(2,2);g.drawImage(img,0,0,width,height);await new Promise(resolve=>c.toBlob(b=>{if(b)save(b,'SEM-颗粒统计十图.png');resolve()},'image/png'))}finally{URL.revokeObjectURL(url)}}catch(e){status('导出统计图失败：'+e.message)}finally{button.disabled=false}};
+
+async function save(blob,name){
+ const stem=($('filename').textContent||'SEM').replace(/\.[^.]+$/,'').replace(/[\\/:*?"<>|\x00-\x1f]+/g,'_').slice(0,75)||'SEM';
+ const fileName=stem+'_'+name;
+ if(window.SEM_LOCAL_SERVER){try{const response=await fetch('/api/output/'+encodeURIComponent(fileName),{method:'POST',headers:{'Content-Type':blob.type||'application/octet-stream'},body:blob});if(!response.ok)throw Error(await response.text());const data=await response.json();status('已保存到 output 文件夹：'+data.name);return}catch(error){status('写入 output 失败，改为浏览器下载：'+error.message)}}
+ const a=document.createElement('a'),url=URL.createObjectURL(blob);a.href=url;a.download=fileName;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)
+}
+$('csv').onclick=()=>{if(!analysis||dirty||!scale()){status('请先完成识别和有效标定。');return}let s=scale(),unit=$('unit').value;let rows=[['编号','纳入统计','粒径('+unit+')','面积('+unit+'²)','周长('+unit+')','二维圆度4πA/P²','测量方式','扫描轮次','可见圆弧比例','标定像素长度','标定实际长度','单位','阈值','平滑半径','对比度','最大缺失弧比例','底部排除px','纳入颗粒间相对投影面积占比 (%)','纳入颗粒间球形体积占比 (%)']];const included=analysis.results.filter(p=>p.included),maxD=included.reduce((m,p)=>Math.max(m,2*Math.sqrt(p.area/Math.PI)*s),0),sumArea=included.reduce((a,p)=>a+(2*Math.sqrt(p.area/Math.PI)*s/maxD)**2,0),sumVol=included.reduce((a,p)=>a+(2*Math.sqrt(p.area/Math.PI)*s/maxD)**3,0);for(const p of orderedResults())rows.push([p.id,p.included?'是':'否',2*Math.sqrt(p.area/Math.PI)*s,p.area*s*s,p.perimeter*s,p.circularity??'',p.kind,p.manual?'':p.pass||1,p.coverage??'',value('pixels'),value('length'),unit,value('threshold'),value('blur'),value('contrast')/10,value('missing')/100,value('crop'),p.included&&sumArea?100*(2*Math.sqrt(p.area/Math.PI)*s/maxD)**2/sumArea:0,p.included&&sumVol?100*(2*Math.sqrt(p.area/Math.PI)*s/maxD)**3/sumVol:0]);save(new Blob(['\ufeff'+rows.map(r=>r.map(v=>'"'+String(v).replaceAll('"','""')+'"').join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'}),'颗粒测量结果.csv')};
+
+
+function fillParticleHoles(layer,p,color,labels,excluded){
+  if(!p.boundary.length)return;
+  let left=w-1,right=0,top=h-1,bottom=0;
+  for(const point of p.boundary){
+    left=Math.min(left,point.x);right=Math.max(right,point.x);
+    top=Math.min(top,point.y);bottom=Math.max(bottom,point.y);
+  }
+  const stride=right-left+3, height=bottom-top+3;
+  // A one-pixel margin lets the fill reach the outside on every side.
+  const local=new Uint8Array(stride*height);
+  for(let y=top;y<=bottom;y++)for(let x=left;x<=right;x++){
+    if(labels[y*w+x]===p.component)local[(y-top+1)*stride+x-left+1]=1;
+  }
+  const queue=new Int32Array(local.length);
+  local[0]=2;
+  let size=1;
+  for(let k=0;k<size;k++){
+    const i=queue[k],x=i%stride;
+    for(const j of [x>0?i-1:-1,x<stride-1?i+1:-1,i-stride,i+stride]){
+      if(local[j]!==0)continue;
+      local[j]=2;
+      queue[size++]=j;
+    }
+  }
+  for(let y=top;y<=bottom;y++)for(let x=left;x<=right;x++){
+    const i=y*w+x,k=i*4;
+    if(local[(y-top+1)*stride+x-left+1]===0 && !excluded.has(labels[i]) && !layer[k+3]) layer.set(color,k);
+  }
+}
+
+function makeParticleColorCanvas(particles) {
+  const palette=[
+    [255,39,72,255],[0,227,255,255],[255,231,0,255],[36,240,93,255],
+    [238,54,255,255],[255,131,0,255],[99,115,255,255],[0,255,181,255],
+    [255,101,190,255],[174,247,32,255]
+  ];
+  const maskCanvas=document.createElement('canvas');
+  maskCanvas.width=w;maskCanvas.height=h;
+  const fill=maskCanvas.getContext('2d',{willReadFrequently:true});
+  const colorFor=p=>palette[(p.id-1)%palette.length];
+  const fitted=particles.filter(p=>p.r).sort((a,b)=>b.r-a.r);
+  for(const p of fitted){
+    const [r,g,b]=colorFor(p);
+    fill.fillStyle='rgb('+r+','+g+','+b+')';
+    fill.beginPath();
+    fill.arc(p.x,p.y,p.r,0,2*Math.PI);
+    fill.fill();
+  }
+  const layer=fill.getImageData(0,0,w,h), labels=analysis.labels;
+  const colors=new Map();
+  const excluded=new Set(analysis.results.filter(p=>!p.included&&!p.r).map(p=>p.component));
+  for(const p of particles){
+    if(p.r)continue;
+    const color=colorFor(p);
+    colors.set(p.component,color);
+    fillParticleHoles(layer.data,p,color,labels,excluded);
+  }
+  for(let i=0;i<labels.length;i++){
+    const color=colors.get(labels[i]);
+    if(color)layer.data.set(color,i*4);
+  }
+  fill.putImageData(layer,0,0);
+  const snap=document.createElement('canvas');
+  snap.width=w;snap.height=fullH;
+  const output=snap.getContext('2d');
+  output.drawImage(original,0,0);
+  output.drawImage(maskCanvas,0,0);
+  return snap;
+}
+$('colorPng').onclick = () => {
+  if (!analysis || dirty) {
+    status('请先完成识别。');
+    return;
+  }
+  const particles = analysis.results.filter(p => p.included);
+  if (!particles.length) {
+    status('请至少纳入一颗颗粒。');
+    return;
+  }
+  makeParticleColorCanvas(particles).toBlob(blob=>{
+    if(blob)save(blob,'SEM-颗粒填色.png');
+    else status('颗粒填色图生成失败。');
+  },'image/png');
+};
+
+const reportMetrics = [
+  ['count','纳入颗粒'],
+  ['mean','平均等效粒径'],
+  ['median','数量中位径 Dn50'],
+  ['volumeMedian','估算体积中位径 Dv50'],
+  ['volumeSpan','估算体积分布宽度 Span'],
+  ['circ','平均实测圆度']
+];
+
+$('report').onclick = () => {
+  if (!analysis || dirty || !scale()) {
+    status('请先完成识别和尺寸标定。');
+    return;
+  }
+  if (!analysis.results.some(p=>p.included)) {
+    status('请至少纳入一颗颗粒。');
+    return;
+  }
+  $('reportError').textContent='';
+  $('reportRows').replaceChildren();
+  const metrics=summaryMetrics(particleSummary());
+  for (const [id,label] of reportMetrics) {
+    const row = $('reportRows').insertRow();
+    const heading = document.createElement('th');
+    heading.scope='row';
+    const fieldLabel = document.createElement('label');
+    fieldLabel.htmlFor='report-'+id;
+    fieldLabel.textContent=label;
+    heading.append(fieldLabel);
+    row.append(heading);
+    const input = document.createElement('input');
+    input.id=fieldLabel.htmlFor;
+    input.type='text';
+    input.required=true;
+    input.maxLength=80;
+    input.value=metrics[id];
+    row.insertCell().append(input);
+  }
+  $('reportDialog').showModal();
+};
+
+$('cancelReport').onclick=()=>$('reportDialog').close();
+
+function renderReportPage(figures,rows){
+  // A4 landscape at 300 dpi. Lay out the Chinese text using the browser's fonts.
+  const page=document.createElement('canvas');
+  page.width=3508;page.height=2480;
+  const paint=page.getContext('2d',{alpha:false});
+  const margin=136,gap=36,fontSize=48,lineHeight=68,cellPadding=28;
+  const width=page.width-2*margin, labelWidth=Math.round(width*.43);
+  const font=fontSize+'px "Microsoft YaHei","PingFang SC",sans-serif';
+  paint.font=font;
+  const table=rows.map(([label,value])=>{
+    const lines=[];
+    let line='';
+    for(const char of value){
+      if(line && paint.measureText(line+char).width>width-labelWidth-2*cellPadding){
+        lines.push(line);
+        line='';
+      }
+      line+=char;
+    }
+    lines.push(line);
+    return {label,lines,height:lines.length*lineHeight+2*cellPadding};
+  });
+  const tableHeight=table.reduce((total,row)=>total+row.height,0);
+  const slot=(width-2*gap)/3;
+  const maxHeight=page.height-2*margin-tableHeight-54;
+  const ratio=Math.min(slot/figures[0].width,maxHeight/figures[0].height);
+  const figureWidth=figures[0].width*ratio,figureHeight=figures[0].height*ratio;
+  paint.fillStyle='#fff';
+  paint.fillRect(0,0,page.width,page.height);
+  paint.imageSmoothingQuality='high';
+  figures.forEach((figure,i)=>{
+    const x=margin+i*(slot+gap)+(slot-figureWidth)/2;
+    paint.drawImage(figure,x,margin,figureWidth,figureHeight);
+  });
+
+  let y=Math.round(margin+figureHeight+54);
+  const top=y;
+  paint.textBaseline='middle';
+  paint.lineWidth=3;
+  paint.strokeStyle='#aab4b8';
+  for(const row of table){
+    paint.fillStyle='#f3f5f5';
+    paint.fillRect(margin,y,labelWidth,row.height);
+    paint.fillStyle='#142029';
+    paint.font='600 '+font;
+    paint.fillText(row.label,margin+cellPadding,y+row.height/2,labelWidth-2*cellPadding);
+    paint.font=font;
+    row.lines.forEach((line,i)=>paint.fillText(line,margin+labelWidth+cellPadding,y+cellPadding+(i+.5)*lineHeight));
+    y+=row.height;
+    if(y<top+tableHeight){
+      paint.beginPath();paint.moveTo(margin,y);paint.lineTo(margin+width,y);paint.stroke();
+    }
+  }
+  paint.strokeRect(margin,top,width,tableHeight);
+  paint.beginPath();paint.moveTo(margin+labelWidth,top);paint.lineTo(margin+labelWidth,y);paint.stroke();
+  return page;
+}
+
+async function reportPdf(page){
+  const jpeg=await new Promise(resolve=>page.toBlob(resolve,'image/jpeg',.97));
+  if(!jpeg)throw Error('无法编码报告页面。');
+  const encoder=new TextEncoder();
+  const parts=[], offsets=[0];
+  let length=0;
+  function append(part){
+    const bytes=typeof part==='string'?encoder.encode(part):part;
+    parts.push(bytes);
+    length+=bytes.byteLength??bytes.size;
+  }
+  function object(header,stream){
+    const id=offsets.length;
+    offsets.push(length);
+    append(id+' 0 obj\n'+header+'\n');
+    if(stream){
+      append('stream\n');
+      append(stream);
+      append('\nendstream\n');
+    }
+    append('endobj\n');
+  }
+  append('%PDF-1.4\n');
+  object('<< /Type /Catalog /Pages 2 0 R >>');
+  object('<< /Type /Pages /Kids [3 0 R] /Count 1 >>');
+  object('<< /Type /Page /Parent 2 0 R /MediaBox [0 0 841.89 595.28] /Resources << /XObject << /Report 4 0 R >> >> /Contents 5 0 R >>');
+  object('<< /Type /XObject /Subtype /Image /Width '+page.width+' /Height '+page.height+
+    ' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length '+jpeg.size+' >>',jpeg);
+  const commands=encoder.encode('q\n841.89 0 0 595.28 0 0 cm\n/Report Do\nQ\n');
+  object('<< /Length '+commands.byteLength+' >>',commands);
+  const xref=length;
+  append('xref\n0 '+offsets.length+'\n0000000000 65535 f \n');
+  for(const offset of offsets.slice(1))append(String(offset).padStart(10,'0')+' 00000 n \n');
+  append('trailer\n<< /Size '+offsets.length+' /Root 1 0 R >>\nstartxref\n'+xref+'\n%%EOF\n');
+  return new Blob(parts,{type:'application/pdf'});
+}
+$('reportForm').onsubmit = async event => {
+  event.preventDefault();
+  const values=reportMetrics.map(([id,label])=>[label,$('report-'+id).value.trim()]);
+  const empty=values.findIndex(([,value])=>!value);
+  if(empty>=0){
+    $('report-'+reportMetrics[empty][0]).focus();
+    $('reportError').textContent='请填写该项数据。';
+    return;
+  }
+  const button=$('confirmReport');
+  button.disabled=true;
+  $('reportError').textContent='';
+  try{
+    const particles=analysis.results.filter(p=>p.included);
+    const marked=document.createElement('canvas');
+    marked.width=w;marked.height=fullH;
+    const paint=marked.getContext('2d');
+    paint.drawImage(original,0,0);
+    for(const p of particles)drawParticleOutline(paint,p,'#ff202e');
+    const colored=makeParticleColorCanvas(particles);
+    const page=renderReportPage([original,marked,colored],values);
+    await save(await reportPdf(page),'SEM-颗粒报告.pdf');
+    $('reportDialog').close();
+  }catch(error){
+    $('reportError').textContent='报告生成失败：'+error.message;
+  }finally{
+    button.disabled=false;
+  }
+};
+$('png').onclick=()=>{if(!analysis){status('请先完成识别。');return}let old=view;view='overlay';draw();let snap=document.createElement('canvas');snap.width=w;snap.height=fullH;snap.getContext('2d').drawImage(canvas,0,0);view=old;draw();snap.toBlob(b=>{if(b)save(b,'SEM-颗粒标注.png')})};
+function demo(){let c=document.createElement('canvas');c.width=1000;c.height=650;let g=c.getContext('2d');g.fillStyle='#3b4042';g.fillRect(0,0,1000,650);let seed=71,rand=()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296};for(let i=0;i<110;i++){let x=25+rand()*950,y=25+rand()*555,r=5+rand()**2*30;let grad=g.createRadialGradient(x-r*.3,y-r*.3,0,x,y,r);grad.addColorStop(0,'#d2d5d5');grad.addColorStop(1,'#a2a9ab');g.fillStyle=grad;g.beginPath();g.arc(x,y,r,0,Math.PI*2);g.fill()}g.fillStyle='#070a0b';g.fillRect(0,610,1000,40);g.fillStyle='white';g.fillRect(785,625,160,5);g.font='13px sans-serif';g.fillText('10 μm',800,647);g.fillText('合成示例 · 用于体验，非实验数据',20,635);load(c,'合成颗粒示例（非实验数据）');$('crop').value=40;update();scaleLabel()}
+$('demo').onclick=demo;status('导入图像开始。');scaleLabel();
+
+// Keyboard-first particle review: Up/Down navigate; Space toggles; Delete excludes; A restores.
+window.addEventListener('keydown',e=>{
+ if(!analysis||!analysis.results.length||calibrating||e.metaKey||e.ctrlKey||e.altKey)return;
+ if(e.target.closest('textarea,select,[contenteditable="true"],input:not([type="checkbox"])'))return;
+ if((e.key===' '||e.key==='Spacebar')&&e.target.closest('button,summary'))return;
+ const key=e.key,nav=key==='ArrowUp'||key==='ArrowDown',toggleKey=key===' '||key==='Spacebar',exclude=key==='Delete'||key==='Backspace'||key.toLowerCase()==='x',restore=key.toLowerCase()==='a';
+ if(!nav&&!toggleKey&&!exclude&&!restore)return;
+ e.preventDefault();
+ const list=orderedResults();let i=list.findIndex(p=>p.id===selectedId);
+ if(nav){i=i<0?(key==='ArrowDown'?0:list.length-1):Math.max(0,Math.min(list.length-1,i+(key==='ArrowDown'?1:-1)));focusParticle(list[i].id);const row=$('rows').querySelector('[data-id="'+list[i].id+'"]'),box=document.querySelector('.results .tablewrap');if(row&&box){let r=row.getBoundingClientRect(),b=box.getBoundingClientRect();box.scrollTop+=r.top-b.top-box.clientHeight/2+r.height/2}}
+ else {if(i<0){focusParticle(list[0].id);i=0}const p=list[i];if(toggleKey)toggle(p.id);else setIncluded(p.id,restore);}
+});
+
+
+// Local folder workflow. The same HTML can open directly; direct-file mode uses ordinary downloads.
+window.SEM_LOCAL_SERVER=location.protocol==='http:'&&location.hostname==='127.0.0.1';
+async function refreshInputs(prefer=''){
+ if(!window.SEM_LOCAL_SERVER)return;
+ try{
+   const response=await fetch('/api/inputs',{cache:'no-store'});if(!response.ok)throw Error('读取失败');
+   const items=await response.json(),box=$('inputList'),previous=prefer||box.value;
+   box.replaceChildren();let empty=document.createElement('option');empty.value='';empty.textContent=items.length?'选择图像（'+items.length+'）':'暂无图像';box.append(empty);
+   for(const name of items){let option=document.createElement('option');option.value=name;option.textContent=name;box.append(option)}
+   box.value=items.includes(previous)?previous:(items[0]||'');
+ }catch(error){status('无法读取 input 文件夹：'+error.message)}
+}
+async function openInputFile(name){
+ if(!name){status('请先在 input 中选择图片');return}
+ status('正在打开 input / '+name+'…');
+ try{
+  const response=await fetch('/input/'+encodeURIComponent(name));if(!response.ok)throw Error('文件读取失败');
+  const buffer=await response.arrayBuffer(),sequence=++importSequence;
+  const head=new Uint8Array(buffer,0,Math.min(buffer.byteLength,4));
+  const isTiff=/\.tiff?$/i.test(name)||(head[0]===73&&head[1]===73)||(head[0]===77&&head[1]===77);
+  if(isTiff){const decoded=await TiffReader.decode(buffer);if(sequence!==importSequence)return;const c=document.createElement('canvas');c.width=decoded.width;c.height=decoded.height;c.getContext('2d').putImageData(new ImageData(decoded.rgba,c.width,c.height),0,0);load(c,name,decoded)}
+  else{const url=URL.createObjectURL(new Blob([buffer]));try{const img=new Image();await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=()=>reject(Error('浏览器无法解码这张图片'));img.src=url});if(sequence===importSequence)load(img,name)}finally{URL.revokeObjectURL(url)}}
+ }catch(error){status('打开失败：'+error.message)}
+}
+$('openInput').onclick=()=>openInputFile($('inputList').value);
+$('inputList').ondblclick=()=>openInputFile($('inputList').value);
+$('reloadInputs').onclick=()=>refreshInputs();
+$('openOutput').onclick=async()=>{if(window.SEM_LOCAL_SERVER){try{const r=await fetch('/api/open-output',{method:'POST'});if(!r.ok)throw Error('文件夹打开失败');return}catch(e){status('打开 output 文件夹失败：'+e.message)}}else status('请使用启动项打开程序；当前网页模式请到浏览器下载目录查看导出结果')};
+if(window.SEM_LOCAL_SERVER)refreshInputs();
+else $('inputList').innerHTML='<option value="">请运行根目录「开始标注」</option>';
+updateCutoffLabel();
+// Graphs expand to the full work area instead of being confined to the results column.
+document.querySelector('article').append($('graphs'));
+</script></body></html>
